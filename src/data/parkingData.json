@@ -1,0 +1,26 @@
+[
+  {
+    "parkingSpots": [
+      { "type": "Hc", "freeSpots": 5 },
+      { "type": "Family", "freeSpots": 10 },
+      { "type": "Ev", "freeSpots": 3 },
+      { "type": "Normal", "freeSpots": 20 }
+    ]
+  },
+  {
+    "parkingSpots": [
+      { "type": "Hc", "freeSpots": 4 },
+      { "type": "Family", "freeSpots": 8 },
+      { "type": "Ev", "freeSpots": 2 },
+      { "type": "Normal", "freeSpots": 15 }
+    ]
+  },
+  {
+    "parkingSpots": [
+      { "type": "Hc", "freeSpots": 3 },
+      { "type": "Family", "freeSpots": 6 },
+      { "type": "Ev", "freeSpots": 1 },
+      { "type": "Normal", "freeSpots": 10 }
+    ]
+  }
+]
