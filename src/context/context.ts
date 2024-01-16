@@ -17,5 +17,4 @@ type ParkContextType = {
 // Create the context with a default value
 const ParkContext = createContext<ParkContextType | undefined>(undefined);
 
-const Num1 = createContext<number | undefined>(undefined);
-export { ParkContext, Num1 };
+export { ParkContext };

@@ -3,10 +3,12 @@ import { MdFamilyRestroom } from "react-icons/md";
 import { Button, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { useContext } from "react";
-import { ParkContext, Num1 } from "../context/context";
+import { ParkContext } from "../context/context";
+import { useNavigate } from "react-router-dom";
 
 function FloorsPage() {
   const contextValue = useContext(ParkContext);
+  const navigate = useNavigate();
 
   if (!contextValue) {
     // Handle the case where the context value is undefined
@@ -16,45 +18,18 @@ function FloorsPage() {
 
   const { data, setData } = contextValue;
 
-  console.log(data);
-
-  const handleClick = (floorIdx: number, spotIdx: number) => {
-    console.log("floorIdx:", floorIdx);
-    console.log("spotIdx:", spotIdx);
+  const handleClick = (floorIdx: number) => {
+    // Add the selected floor data to the data state
     setData((prevData) => {
-      // Create a new array with the updated parking data
-      const updatedData = prevData.map((floor, index) => {
-        if (index === floorIdx) {
-          // This is the floor where we want to park
-          // Update the number of free spots for the parking spot
-          return {
-            ...floor,
-            parkingSpots: floor.parkingSpots.map((spot, spotIndex) => {
-              if (spotIndex === spotIdx) {
-                // This is the spot we want to update
-                if (spot.freeSpots === 0) {
-                  // If there are no free spots left, show a warning and don't decrement
-                  alert(`No spots left of type ${spot.type}`);
-                  return spot;
-                } else {
-                  // If there are free spots left, decrement the number of free spots
-                  return { ...spot, freeSpots: spot.freeSpots - 1 };
-                }
-              } else {
-                // This is not the spot we want to update, so leave it unchanged
-                return spot;
-              }
-            }),
-          };
-        } else {
-          // This is not the floor where we want to park, so leave it unchanged
-          return floor;
-        }
-      });
-
+      const updatedData = { ...prevData, selectedFloor: prevData[floorIdx] };
       return updatedData;
     });
+
+    // Navigate to the "/choose-parking" path
+    navigate("/choose-parking");
   };
+
+  console.log(data);
 
   if (data) {
     return (
