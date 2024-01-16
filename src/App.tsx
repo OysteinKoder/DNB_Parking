@@ -40,10 +40,7 @@ function App() {
           <Space bottom="large" />
           <Routes>
             <Route path="/" element={<FloorsPage />} />
-            <Route
-              path="/choose-parking-page"
-              element={<ChooseParkingPage />}
-            />
+            <Route path="/choose-parking" element={<ChooseParkingPage />} />
           </Routes>
         </div>
       </BrowserRouter>
