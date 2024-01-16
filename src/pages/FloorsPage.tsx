@@ -3,7 +3,7 @@ import { MdFamilyRestroom } from "react-icons/md";
 import { Button, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { useContext } from "react";
-import { ParkContext, Num1 } from "../context/context";
+import { ParkContext } from "../context/context";
 
 function FloorsPage() {
   const contextValue = useContext(ParkContext);

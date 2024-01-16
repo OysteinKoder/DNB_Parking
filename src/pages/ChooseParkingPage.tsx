@@ -5,3 +5,5 @@ function ChooseParkingPage() {
     </div>
   );
 }
+
+export default ChooseParkingPage;
