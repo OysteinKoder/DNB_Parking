@@ -2,8 +2,8 @@ import "./App.css";
 import Floor from "./components/floor";
 import parkData from "./data/parkingData.json";
 import { H1, P, Space } from "@dnb/eufemia";
-import { useState } from "react";
-import { ParkContext } from "./context/context";
+import { useEffect, useState } from "react";
+import { ParkContext, Num1 } from "./context/context";
 
 type ParkingSpot = {
   type: string;
@@ -17,9 +17,16 @@ type ParkData = {
 function App() {
   const [data, setData] = useState<ParkData | undefined>(() => {
     const storedData = localStorage.getItem("parkingData");
-    return storedData ? JSON.parse(storedData) : parkData;
+    if (storedData) {
+      return JSON.parse(storedData);
+    } else {
+      return parkData;
+    }
   });
 
+  useEffect(() => {
+    localStorage.setItem("parkingData", JSON.stringify(data));
+  }, [data]);
   // Use the useEffect hook to update localStorage whenever parkingData changes
   // renders page if parkingData is present\
   return data ? (
