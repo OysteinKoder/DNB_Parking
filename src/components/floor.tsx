@@ -17,16 +17,15 @@ function Floor({ parkData }: { parkData: ParkData }) {
     <>
       <h2>Floors</h2>
       {parkData.map((floor, idx) => {
-        console.log(idx);
         return (
-          <div className="dottedBottom reverse">
+          <div className="dottedBottom reverse" key={idx}>
             <Space bottom="large" />
             <Button text="Park" variant="secondary" className="shadow" />
             <div className="floorCard" key={idx}>
               {floor.parkingSpots.map((spot: any) => {
                 return (
-                  <div>
-                    <span className="floorCardText" key={spot.type}>
+                  <div key={spot.type}>
+                    <span className="floorCardText">
                       {spot.type === "Hc" && <FaWheelchair />}
                       {spot.type === "Family" && <MdFamilyRestroom />}
                       {spot.type === "Ev" && <AiFillThunderbolt />}
