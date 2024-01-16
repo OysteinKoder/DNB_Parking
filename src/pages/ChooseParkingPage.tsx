@@ -4,7 +4,6 @@ import { Button, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { useContext } from "react";
 import { ParkContext } from "../context/context";
-import { useNavigate } from "react-router-dom";
 
 function ChooseParkingPage() {
   const contextValue = useContext(ParkContext);
@@ -15,42 +14,31 @@ function ChooseParkingPage() {
     throw new Error("ParkContext is undefined");
   }
   const { data, setData } = contextValue;
-  const parking = data.selectedFloor.parkingSpots;
-  console.log(parking);
+  const selectedFloor = data.selectedFloor;
+  const currentFloor = data[selectedFloor].parkingSpots;
+  console.log(currentFloor);
 
-  const handleClick = (spotIndex: number) => {
-    setData((prevData) => {
-      // Create a deep copy of prevData
-      const newData = JSON.parse(JSON.stringify(prevData));
-      // Access the selected floor directly
-      const selectedFloor = newData.selectedFloor;
+  const handleClick = (spotIdx: number) => {
+    // Create a deep copy of data
+    const newData = JSON.parse(JSON.stringify(data));
 
-      if (!selectedFloor) {
-        // If the selected floor is not found, return the previous data
-        return prevData;
-      }
-
-      if (!selectedFloor.parkingSpots[spotIndex]) {
-        // If there is no spot at the given index, return the previous data
-        return prevData;
-      }
-
-      if (selectedFloor.parkingSpots[spotIndex].freeSpots <= 0) {
-        // If there are no free spots left, return the previous data
-        window.alert("No free spots available");
-        return prevData;
-      }
-
+    // Check if the selected spot has free spots
+    if (newData[selectedFloor].parkingSpots[spotIdx].freeSpots > 0) {
       // Decrement the number of free spots
-      selectedFloor.parkingSpots[spotIndex].freeSpots--;
+      newData[selectedFloor].parkingSpots[spotIdx].freeSpots--;
+    } else {
+      // If there are no free spots left, return without updating the state
+      console.warn("No free spots available");
+      return;
+    }
 
-      // Return the updated data
-      return newData;
-    });
+    // Update the state with the new data
+    setData(newData);
   };
+
   return (
     <div className="floor">
-      {parking.map((spot, spotIdx) => {
+      {currentFloor.map((spot, spotIdx) => {
         return (
           <div className="pickSpotCard" key={spotIdx}>
             <span className="floorCardText">
