@@ -1,13 +1,27 @@
 import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { Anchor, Button, Link, Space } from "@dnb/eufemia";
+import { Anchor, Button } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { useContext } from "react";
-import { ParkContext } from "../context/context";
+import { useContext, useEffect, useState } from "react";
+import { ParkContext, Vehicle } from "../context/context";
 import { useNavigate } from "react-router";
 
 function ChooseParkingPage() {
   const contextValue = useContext(ParkContext);
+  const [parkedCars, setParkedCars] = useState<Vehicle[]>(() => {
+    // Try to get the initial state from local storage
+    const savedParkedCars = localStorage.getItem("parkedCars");
+
+    if (savedParkedCars) {
+      // If the parked cars exist in local storage, parse them and return them
+      return JSON.parse(savedParkedCars);
+    } else {
+      // If the parked cars do not exist in local storage, return an empty array
+      return [];
+    }
+  });
+
+  const navigate = useNavigate();
 
   if (!contextValue) {
     // Handle the case where the context value is undefined
@@ -20,6 +34,13 @@ function ChooseParkingPage() {
   console.log(currentFloor);
 
   const handleClick = (spotIdx: number) => {
+    // Check if there is already a parked car
+    if (parkedCars.length > 0) {
+      // If there is already a parked car, show an error message and return
+      window.alert("Only one car can be parked at a time");
+      return;
+    }
+
     // Create a deep copy of data
     const newData = JSON.parse(JSON.stringify(data));
 
@@ -29,13 +50,33 @@ function ChooseParkingPage() {
       newData[selectedFloor].parkingSpots[spotIdx].freeSpots--;
     } else {
       // If there are no free spots left, return without updating the state
-      console.warn("No free spots available");
+      window.alert("No free spots available");
       return;
     }
 
+    // Create a new vehicle object
+    const newVehicle = {
+      id: Math.random().toString(), // Generate a random id
+      parkingFloor: selectedFloor, // Store the parking floor
+      parkingType: newData[selectedFloor].parkingSpots[spotIdx].type,
+      entryTime: new Date(), // Set the entry time to the current time
+    };
+
+    // Add the new vehicle to the parkedCars array
+    setParkedCars((prevParkedCars) => [...prevParkedCars, newVehicle]);
+
     // Update the state with the new data
     setData(newData);
+    navigate("/leave-parking");
   };
+
+  useEffect(() => {
+    // Convert the parkedCars array to a JSON string
+    const parkedCarsJson = JSON.stringify(parkedCars);
+
+    // Save the JSON string in local storage
+    localStorage.setItem("parkedCars", parkedCarsJson);
+  }, [parkedCars]);
 
   return (
     <div className="floor">

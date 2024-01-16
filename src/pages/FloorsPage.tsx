@@ -2,7 +2,7 @@ import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
 import { Button, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { ParkContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
 
@@ -55,7 +55,7 @@ function FloorsPage() {
                   </div>
                 ))}
               </div>
-              <Button on_click={() => handleClick(floorIdx, 0)}>park</Button>
+              <Button on_click={() => handleClick(floorIdx, 0)}>Select</Button>
               <Space bottom="2.5rem" />
             </div>
           ))}
@@ -89,7 +89,7 @@ function FloorsPage() {
                   ))}
                 </div>
                 <Button onClick={() => handleClick(parseInt(key), 0)}>
-                  park
+                  Select
                 </Button>
                 <Space bottom="2.5rem" />
               </div>

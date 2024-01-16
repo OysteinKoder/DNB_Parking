@@ -5,7 +5,7 @@ type ParkingSpot = {
   freeSpots: number;
 };
 
-type ParkData = {
+export type ParkData = {
   parkingSpots: ParkingSpot[];
 };
 
@@ -17,4 +17,25 @@ type ParkContextType = {
 // Create the context with a default value
 const ParkContext = createContext<ParkContextType | undefined>(undefined);
 
-export { ParkContext };
+export type Vehicle = {
+  id: string;
+  parkingType: "Normal" | "Hc" | "Ev" | "Family";
+  entryTime: Date;
+};
+
+type ParkedCarsContextType = {
+  parkedCars: Vehicle[];
+  setParkedCars: React.Dispatch<React.SetStateAction<Vehicle[]>>;
+};
+
+const ParkedCars = createContext<ParkedCarsContextType | undefined>(undefined);
+
+export type HourlyRatesType = {
+  firstHour: number;
+  secondHour: number;
+  followingHours: number;
+};
+
+const HourlyRates = createContext<HourlyRatesType | undefined>(undefined);
+
+export { ParkContext, ParkedCars, HourlyRates };
