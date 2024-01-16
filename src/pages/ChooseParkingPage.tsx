@@ -22,7 +22,6 @@ function ChooseParkingPage() {
     setData((prevData) => {
       // Create a deep copy of prevData
       const newData = JSON.parse(JSON.stringify(prevData));
-
       // Access the selected floor directly
       const selectedFloor = newData.selectedFloor;
 
@@ -31,8 +30,14 @@ function ChooseParkingPage() {
         return prevData;
       }
 
-      if (selectedFloor.parkingSpots[spotIndex].freeSpots === 0) {
+      if (!selectedFloor.parkingSpots[spotIndex]) {
+        // If there is no spot at the given index, return the previous data
+        return prevData;
+      }
+
+      if (selectedFloor.parkingSpots[spotIndex].freeSpots <= 0) {
         // If there are no free spots left, return the previous data
+        window.alert("No free spots available");
         return prevData;
       }
 
