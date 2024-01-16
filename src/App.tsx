@@ -1,9 +1,10 @@
 import "./App.css";
-import Floor from "./components/floor";
+import Floors from "./components/floor";
 import parkData from "./data/parkingData.json";
 import { H1, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
 import { ParkContext, Num1 } from "./context/context";
+import FloorsPage from "./pages/FloorsPage";
 
 type ParkingSpot = {
   type: string;
@@ -35,7 +36,7 @@ function App() {
         <H1>DNB Park</H1>
         <Space bottom="large" />
         <div className="pageContainer">
-          <Floor />
+          <FloorsPage />
         </div>
       </>
     </ParkContext.Provider>

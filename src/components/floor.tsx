@@ -5,7 +5,7 @@ import { AiFillThunderbolt } from "react-icons/ai";
 import { useContext } from "react";
 import { ParkContext, Num1 } from "../context/context";
 
-function Floor() {
+function Floors() {
   const contextValue = useContext(ParkContext);
 
   if (!contextValue) {
@@ -77,4 +77,4 @@ function Floor() {
   } else return <p>Loading</p>;
 }
 
-export default Floor;
+export default Floors;
