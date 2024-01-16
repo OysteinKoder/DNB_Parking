@@ -16,12 +16,12 @@ type ParkData = {
 };
 
 function App() {
-  const [data, setData] = useState<ParkData | undefined>(() => {
+  const [data, setData] = useState<ParkData[]>(() => {
     const storedData = localStorage.getItem("parkingData");
     if (storedData) {
       return JSON.parse(storedData);
     } else {
-      return parkData;
+      return parkData; // make sure parkData is an array of ParkData objects
     }
   });
 
