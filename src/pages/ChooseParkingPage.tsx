@@ -1,9 +1,10 @@
 import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { Button, Space } from "@dnb/eufemia";
+import { Anchor, Button, Link, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { useContext } from "react";
 import { ParkContext } from "../context/context";
+import { useNavigate } from "react-router";
 
 function ChooseParkingPage() {
   const contextValue = useContext(ParkContext);
@@ -38,6 +39,14 @@ function ChooseParkingPage() {
 
   return (
     <div className="floor">
+      <div>
+        <h2>P {selectedFloor + 1}</h2>
+
+        <Anchor icon="chevron_left" iconPosition="left" href="/">
+          {" "}
+          Back
+        </Anchor>
+      </div>
       {currentFloor.map((spot, spotIdx) => {
         return (
           <div className="pickSpotCard" key={spotIdx}>
