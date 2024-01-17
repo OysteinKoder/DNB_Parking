@@ -2,105 +2,115 @@ import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
 import { Anchor, Button } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ParkContext, Vehicle } from "../context/context";
 import { useNavigate } from "react-router";
 
 function ChooseParkingPage() {
+  // Get context value
   const contextValue = useContext(ParkContext);
-  const [parkedCars, setParkedCars] = useState<Vehicle[]>(() => {
-    // Try to get the initial state from local storage
-    const savedParkedCars = localStorage.getItem("parkedCars");
 
-    if (savedParkedCars) {
-      // If the parked cars exist in local storage, parse them and return them
-      return JSON.parse(savedParkedCars);
-    } else {
-      // If the parked cars do not exist in local storage, return an empty array
-      return [];
-    }
+  // Initialize previousSpot state
+  const [previousSpot, setPreviousSpot] = useState<number | null>(null);
+
+  // Initialize parkedCars state from local storage or to an empty array
+  const [parkedCars, setParkedCars] = useState(() => {
+    const savedParkedCars = localStorage.getItem("parkedCars");
+    return savedParkedCars ? JSON.parse(savedParkedCars) : [];
   });
 
+  // Initialize navigate function
   const navigate = useNavigate();
 
+  // Throw an error if contextValue is undefined
   if (!contextValue) {
-    // Handle the case where the context value is undefined
-    // For example, you could throw an error or return null from the component
     throw new Error("ParkContext is undefined");
   }
+
+  // Destructure data and setData from contextValue
   const { data, setData } = contextValue;
+
+  // Get selectedFloor from data
   const selectedFloor = data.selectedFloor;
-  const currentFloor = data[selectedFloor].parkingSpots;
-  console.log(currentFloor);
+
+  // Get currentFloor from data or set to an empty array if undefined
+  const currentFloor = data[selectedFloor]
+    ? data[selectedFloor].parkingSpots
+    : [];
 
   const handleClick = (spotIdx: number) => {
-    // Check if there is already a parked car
-    if (parkedCars.length > 0) {
-      // If there is already a parked car, show an error message and return
-      window.alert("Only one car can be parked at a time");
-      return;
+    // Create a deep copy of data
+    const newDatas = JSON.parse(JSON.stringify(data));
+
+    // If a car is already parked, free up the previous spot
+    if (previousSpot !== null) {
+      newDatas[selectedFloor].parkingSpots[previousSpot].freeSpots++;
     }
 
-    // Create a deep copy of data
-    const newData = JSON.parse(JSON.stringify(data));
-
-    // Check if the selected spot has free spots
-    if (newData[selectedFloor].parkingSpots[spotIdx].freeSpots > 0) {
-      // Decrement the number of free spots
-      newData[selectedFloor].parkingSpots[spotIdx].freeSpots--;
+    // If the selected spot has free spots, decrement the number of free spots
+    if (newDatas[selectedFloor].parkingSpots[spotIdx].freeSpots > 0) {
+      newDatas[selectedFloor].parkingSpots[spotIdx].freeSpots--;
     } else {
-      // If there are no free spots left, return without updating the state
+      // If there are no free spots left, alert the user and return without updating the state
       window.alert("No free spots available");
       return;
     }
 
+    // Update the state with the new data
+    setData(newDatas);
+
+    // Update the previous spot
+    setPreviousSpot(spotIdx);
+
     // Create a new vehicle object
-    const newVehicle = {
-      id: Math.random().toString(), // Generate a random id
-      parkingFloor: selectedFloor, // Store the parking floor
-      parkingType: newData[selectedFloor].parkingSpots[spotIdx].type,
-      entryTime: new Date(), // Set the entry time to the current time
+    const newVehicle: Vehicle = {
+      id: Math.random().toString(),
+      parkingFloor: selectedFloor,
+      parkingType: newDatas[selectedFloor].parkingSpots[spotIdx].type,
+      entryTime: new Date(),
     };
 
-    // Add the new vehicle to the parkedCars array
-    setParkedCars((prevParkedCars) => [...prevParkedCars, newVehicle]);
+    // Add the new vehicle to the parkedCars array and update local storage
+    setParkedCars((prevParkedCars) => {
+      const updatedParkedCars = [...prevParkedCars, newVehicle];
+      localStorage.setItem("parkedCars", JSON.stringify(updatedParkedCars));
+      return updatedParkedCars;
+    });
 
-    // Update the state with the new data
-    setData(newData);
+    // Navigate to the "/leave-parking" route
     navigate("/leave-parking");
   };
 
+  // Update local storage whenever parkedCars changes
   useEffect(() => {
-    // Convert the parkedCars array to a JSON string
-    const parkedCarsJson = JSON.stringify(parkedCars);
-
-    // Save the JSON string in local storage
-    localStorage.setItem("parkedCars", parkedCarsJson);
+    localStorage.setItem("parkedCars", JSON.stringify(parkedCars));
   }, [parkedCars]);
 
+  useEffect(() => {
+    localStorage.setItem("previousSpot", JSON.stringify(previousSpot));
+  }, [previousSpot]);
+
+  // Render the component
   return (
     <div className="floor">
       <div>
         <h2>P {selectedFloor + 1}</h2>
-
         <Anchor icon="chevron_left" iconPosition="left" href="/">
           {" "}
           Back
         </Anchor>
       </div>
-      {currentFloor.map((spot, spotIdx) => {
-        return (
-          <div className="pickSpotCard" key={spotIdx}>
-            <span className="floorCardText">
-              {spot.type === "Hc" && <FaWheelchair />}
-              {spot.type === "Family" && <MdFamilyRestroom />}
-              {spot.type === "Ev" && <AiFillThunderbolt />}
-              {spot.type === "Normal" && <FaCar />} {spot.freeSpots}
-            </span>
-            <Button text="park" on_click={() => handleClick(spotIdx)} />
-          </div>
-        );
-      })}
+      {currentFloor.map((spot, spotIdx) => (
+        <div className="pickSpotCard" key={spotIdx}>
+          <span className="floorCardText">
+            {spot.type === "Hc" && <FaWheelchair />}
+            {spot.type === "Family" && <MdFamilyRestroom />}
+            {spot.type === "Ev" && <AiFillThunderbolt />}
+            {spot.type === "Normal" && <FaCar />} {spot.freeSpots}
+          </span>
+          <Button text="park" on_click={() => handleClick(spotIdx)} />
+        </div>
+      ))}
     </div>
   );
 }

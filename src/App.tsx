@@ -46,6 +46,10 @@ function App() {
   });
 
   useEffect(() => {
+    localStorage.setItem("hourlyRates", JSON.stringify(hourlyRates));
+  }, [hourlyRates]);
+
+  useEffect(() => {
     localStorage.setItem("parkingData", JSON.stringify(data));
   }, [data]);
   // Use the useEffect hook to update localStorage whenever parkingData changes
