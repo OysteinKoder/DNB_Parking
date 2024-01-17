@@ -1,62 +1,63 @@
-import { Anchor, Button, Input, P, Space } from "@dnb/eufemia";
+import { Button, Input, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 function LeaveParkingPage() {
-  const [parkedCar, setparkedCar] = useState(() => {
+  const [testTime, setTestTime] = useState(0);
+  const [parkingDuration, setParkingDuration] = useState(0);
+  const [parkedCar] = useState(() => {
     const savedparkedCar = localStorage.getItem("parkedCar");
     return savedparkedCar ? JSON.parse(savedparkedCar) : [];
   });
 
-  const [hourlyRates, setHourlyRates] = useState<HourlyRatesType>(() => {
+  const [hourlyRates] = useState(() => {
     const storedRates = localStorage.getItem("hourlyRates");
     return storedRates
       ? JSON.parse(storedRates)
       : { firstHour: 30, secondHour: 15, followingHours: 5 };
   });
 
-  const [parkingDuration, setParkingDuration] = useState(0);
-  const [testTime, setTestTime] = useState(0);
   const [price, setPrice] = useState(0);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
-    const duration = testTime !== 0 ? testTime : parkingDuration;
-    let calculatedPrice = 0;
-    const fullHours = Math.floor(duration);
-    const partialHour = duration % 1;
+    const timer = setInterval(() => {
+      window.location.reload();
+    }, 5000); // 5000 milliseconds = 5 seconds
 
-    if (fullHours >= 1) {
-      calculatedPrice += hourlyRates.firstHour;
-    }
-    if (fullHours >= 2) {
-      calculatedPrice += hourlyRates.secondHour;
-    }
-    if (fullHours > 2) {
-      calculatedPrice += (fullHours - 2) * hourlyRates.followingHours;
-    }
-    if (partialHour > 0) {
-      if (fullHours === 0) {
-        calculatedPrice += partialHour * hourlyRates.firstHour;
-      } else if (fullHours === 1) {
-        calculatedPrice += partialHour * hourlyRates.secondHour;
-      } else {
-        calculatedPrice += partialHour * hourlyRates.followingHours;
-      }
-    }
-    setPrice(calculatedPrice);
-  }, [parkingDuration, hourlyRates, testTime]);
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (parkedCar[0]) {
       const currentTime = new Date().getTime();
       const entryTime = new Date(parkedCar[0].entryTime).getTime();
-      const duration = currentTime - entryTime;
-      // Convert the duration from milliseconds to hours
-      setParkingDuration(Math.round(duration / 1000 / 60 / 60));
+      const duration = (currentTime - entryTime) / 1000 / 60 / 60; // Convert the duration from milliseconds to hours
+
+      let calculatedPrice = 0;
+      const fullHours = Math.floor(duration);
+      const partialHour = duration % 1;
+
+      if (fullHours >= 1) {
+        calculatedPrice += hourlyRates.firstHour;
+      }
+      if (fullHours >= 2) {
+        calculatedPrice += hourlyRates.secondHour;
+      }
+      if (fullHours > 2) {
+        calculatedPrice += (fullHours - 2) * hourlyRates.followingHours;
+      }
+      if (partialHour > 0) {
+        if (fullHours === 0) {
+          calculatedPrice += partialHour * hourlyRates.firstHour;
+        } else if (fullHours === 1) {
+          calculatedPrice += partialHour * hourlyRates.secondHour;
+        } else {
+          calculatedPrice += partialHour * hourlyRates.followingHours;
+        }
+      }
+      setPrice(calculatedPrice);
     }
-  }, [parkedCar]);
+  }, [parkedCar, hourlyRates]);
   return (
     <div>
       <h1>Leave Parking Page</h1>
