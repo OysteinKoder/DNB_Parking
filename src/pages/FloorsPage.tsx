@@ -1,6 +1,6 @@
 import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { Button, Space } from "@dnb/eufemia";
+import { Anchor, Button, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { useContext } from "react";
 import { ParkContext } from "../context/context";
@@ -44,6 +44,7 @@ function FloorsPage() {
   return (
     <div>
       <h2>Floors</h2>
+      <Anchor href="/admin-page">Admin Page</Anchor>
       {data.length === 3
         ? data.slice(0, 3).map(renderFloor)
         : Object.keys(data)

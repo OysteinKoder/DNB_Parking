@@ -1,13 +1,14 @@
 import "./App.css";
 import parkData from "./data/parkingData.json";
-import { H1, P, Space } from "@dnb/eufemia";
+import { Anchor, H1, P, Space } from "@dnb/eufemia";
 import { createContext, useEffect, useState } from "react";
 import { ParkContext, HourlyRates, HourlyRatesType } from "./context/context";
 import FloorsPage from "./pages/FloorsPage";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import ChooseParkingPage from "./pages/ChooseParkingPage";
 import { Vehicle } from "./context/context";
 import LeaveParkingPage from "./pages/LeaveParkingPage";
+import AdminPage from "./pages/AdminPage";
 
 type ParkingSpot = {
   type: string;
@@ -37,7 +38,7 @@ function App() {
     const storedRates = localStorage.getItem("hourlyRates");
     return storedRates
       ? JSON.parse(storedRates)
-      : { firstHour: 30, secondHour: 15, followingHours: 5 };
+      : { firstHour: 50, secondHour: 30, followingHours: 10 };
   });
 
   const [ParkedCar, setParkedCar] = useState<Vehicle[]>(() => {
@@ -62,7 +63,9 @@ function App() {
             <div className="pageContainer">
               <H1>DNB Park</H1>
               <Space bottom="large" />
+
               <Routes>
+                <Route path="/admin-page" element={<AdminPage />} />
                 <Route path="/" element={<FloorsPage />} />
                 <Route path="/choose-parking" element={<ChooseParkingPage />} />
                 <Route path="/leave-parking" element={<LeaveParkingPage />} />
