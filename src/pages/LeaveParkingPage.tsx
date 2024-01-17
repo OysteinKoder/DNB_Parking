@@ -2,8 +2,9 @@ import { Button, Input, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
 
 function LeaveParkingPage() {
-  const [testTime, setTestTime] = useState(0);
-  const [parkingDuration, setParkingDuration] = useState(0);
+  const [parkingDuration, setParkingDuration] = useState("");
+  const [price, setPrice] = useState(0);
+
   const [parkedCar] = useState(() => {
     const savedparkedCar = localStorage.getItem("parkedCar");
     return savedparkedCar ? JSON.parse(savedparkedCar) : [];
@@ -15,8 +16,6 @@ function LeaveParkingPage() {
       ? JSON.parse(storedRates)
       : { firstHour: 30, secondHour: 15, followingHours: 5 };
   });
-
-  const [price, setPrice] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -31,38 +30,42 @@ function LeaveParkingPage() {
     if (parkedCar[0]) {
       const currentTime = new Date().getTime();
       const entryTime = new Date(parkedCar[0].entryTime).getTime();
-      const duration = (currentTime - entryTime) / 1000 / 60 / 60; // Convert the duration from milliseconds to hours
+      const durationInSeconds = (currentTime - entryTime) / 1000; // Convert the duration from milliseconds to seconds
 
-      let calculatedPrice = 0;
-      const fullHours = Math.floor(duration);
-      const partialHour = duration % 1;
+      const days = Math.floor(durationInSeconds / 86400);
+      const hours = Math.floor((durationInSeconds % 86400) / 3600);
+      const minutes = Math.floor((durationInSeconds % 3600) / 60);
+      const seconds = Math.floor(durationInSeconds % 60);
 
-      if (fullHours >= 1) {
-        calculatedPrice += hourlyRates.firstHour;
+      const formattedTime = `${days}:${hours}:${minutes}:${seconds}`;
+
+      setParkingDuration(formattedTime);
+
+      // Calculate price based on hourly rates and duration
+      let totalHours = Math.ceil(durationInSeconds / 3600); // Round up to the nearest hour
+      let totalPrice = 0;
+
+      if (totalHours > 0) {
+        totalPrice += hourlyRates.firstHour;
+        totalHours--;
       }
-      if (fullHours >= 2) {
-        calculatedPrice += hourlyRates.secondHour;
+
+      if (totalHours > 0) {
+        totalPrice += hourlyRates.secondHour;
+        totalHours--;
       }
-      if (fullHours > 2) {
-        calculatedPrice += (fullHours - 2) * hourlyRates.followingHours;
-      }
-      if (partialHour > 0) {
-        if (fullHours === 0) {
-          calculatedPrice += partialHour * hourlyRates.firstHour;
-        } else if (fullHours === 1) {
-          calculatedPrice += partialHour * hourlyRates.secondHour;
-        } else {
-          calculatedPrice += partialHour * hourlyRates.followingHours;
-        }
-      }
-      setPrice(calculatedPrice);
+
+      totalPrice += totalHours * hourlyRates.followingHours;
+
+      setPrice(totalPrice);
     }
   }, [parkedCar, hourlyRates]);
+
   return (
     <div>
       <h1>Leave Parking Page</h1>
       <div className="checkoutCard">
-        <P>Time : {testTime !== 0 ? testTime : parkingDuration} hours</P>
+        <P>Time : {parkingDuration} hours</P>
         <Space top="1rem" />
         <P>Price : {price} kr</P>
         <Space top="1rem" />
@@ -78,13 +81,6 @@ function LeaveParkingPage() {
           }}
         />
         <Space top="1rem" />
-        <Input
-          type="number"
-          placeholder="Test time"
-          onChange={(e) => {
-            setTestTime(Number(e.target.value));
-          }}
-        />
       </div>
     </div>
   );
