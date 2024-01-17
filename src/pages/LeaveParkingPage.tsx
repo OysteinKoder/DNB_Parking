@@ -1,4 +1,4 @@
-import { Button, Input, P, Space } from "@dnb/eufemia";
+import { Button, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
 
 function LeaveParkingPage() {
@@ -30,7 +30,10 @@ function LeaveParkingPage() {
     if (parkedCar[0]) {
       const currentTime = new Date().getTime();
       const entryTime = new Date(parkedCar[0].entryTime).getTime();
-      const durationInSeconds = (currentTime - entryTime) / 1000; // Convert the duration from milliseconds to seconds
+      const durationInSeconds = (currentTime - entryTime) / 1000;
+
+      const totalSeconds = durationInSeconds;
+      let remainingSeconds = totalSeconds;
 
       const days = Math.floor(durationInSeconds / 86400);
       const hours = Math.floor((durationInSeconds % 86400) / 3600);
@@ -46,16 +49,23 @@ function LeaveParkingPage() {
       let totalPrice = 0;
 
       if (totalHours > 0) {
-        totalPrice += hourlyRates.firstHour;
+        totalPrice +=
+          (hourlyRates.firstHour / 3600) * Math.min(3600, remainingSeconds); // Increment price gradually for the first hour
+        remainingSeconds -= Math.min(3600, remainingSeconds);
         totalHours--;
       }
 
       if (totalHours > 0) {
-        totalPrice += hourlyRates.secondHour;
+        totalPrice +=
+          (hourlyRates.secondHour / 3600) * Math.min(3600, remainingSeconds); // Increment price gradually for the second hour
+        remainingSeconds -= Math.min(3600, remainingSeconds);
         totalHours--;
       }
 
       totalPrice += totalHours * hourlyRates.followingHours;
+
+      // Round the price to two decimal places
+      totalPrice = parseFloat(totalPrice.toFixed(2));
 
       setPrice(totalPrice);
     }
@@ -65,7 +75,7 @@ function LeaveParkingPage() {
     <div>
       <h1>Leave Parking Page</h1>
       <div className="checkoutCard">
-        <P>Time : {parkingDuration} hours</P>
+        <P>Time : {parkingDuration}</P>
         <Space top="1rem" />
         <P>Price : {price} kr</P>
         <Space top="1rem" />
