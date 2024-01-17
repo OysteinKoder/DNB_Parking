@@ -26,6 +26,7 @@ function ChooseParkingPage() {
   const { data, setData } = contextValue;
 
   // Get selectedFloor from data
+  // @ts-ignore
   const selectedFloor = data.selectedFloor;
 
   // Get currentFloor from data or set to an empty array if undefined
