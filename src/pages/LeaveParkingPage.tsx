@@ -1,79 +1,63 @@
-import { Button, P, Space } from "@dnb/eufemia";
+import { Button, H2, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
 
 function LeaveParkingPage() {
+  //states
   const [parkingDuration, setParkingDuration] = useState("");
   const [price, setPrice] = useState(0);
 
-  const [parkedCar] = useState(() => {
-    const savedparkedCar = localStorage.getItem("parkedCar");
-    return savedparkedCar ? JSON.parse(savedparkedCar) : [];
-  });
+  const parkedCar = JSON.parse(localStorage.getItem("parkedCar") || "[]");
+  const hourlyRates = JSON.parse(localStorage.getItem("hourlyRates") || "{}");
 
-  const [hourlyRates] = useState(() => {
-    const storedRates = localStorage.getItem("hourlyRates");
-    return storedRates
-      ? JSON.parse(storedRates)
-      : { firstHour: 30, secondHour: 15, followingHours: 5 };
-  });
-
+  //reloads page every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       window.location.reload();
-    }, 5000); // 5000 milliseconds = 5 seconds
+    }, 5000);
 
-    // Cleanup function to clear the interval when the component unmounts
     return () => clearInterval(timer);
   }, []);
 
+  // calculates the parking duration and price
   useEffect(() => {
     if (parkedCar[0]) {
       const currentTime = new Date().getTime();
       const entryTime = new Date(parkedCar[0].entryTime).getTime();
-      const durationInSeconds = (currentTime - entryTime) / 1000;
-
-      const totalSeconds = durationInSeconds;
-      let remainingSeconds = totalSeconds;
+      let durationInSeconds = (currentTime - entryTime) / 1000;
 
       const days = Math.floor(durationInSeconds / 86400);
       const hours = Math.floor((durationInSeconds % 86400) / 3600);
       const minutes = Math.floor((durationInSeconds % 3600) / 60);
       const seconds = Math.floor(durationInSeconds % 60);
 
-      const formattedTime = `${days}:${hours}:${minutes}:${seconds}`;
+      setParkingDuration(`${days}:${hours}:${minutes}:${seconds}`);
 
-      setParkingDuration(formattedTime);
-
-      // Calculate price based on hourly rates and duration
-      let totalHours = Math.ceil(durationInSeconds / 3600); // Round up to the nearest hour
+      let totalHours = Math.ceil(durationInSeconds / 3600);
       let totalPrice = 0;
 
       if (totalHours > 0) {
         totalPrice +=
-          (hourlyRates.firstHour / 3600) * Math.min(3600, remainingSeconds); // Increment price gradually for the first hour
-        remainingSeconds -= Math.min(3600, remainingSeconds);
+          (hourlyRates.firstHour / 3600) * Math.min(3600, durationInSeconds);
+        durationInSeconds -= Math.min(3600, durationInSeconds);
         totalHours--;
       }
 
       if (totalHours > 0) {
         totalPrice +=
-          (hourlyRates.secondHour / 3600) * Math.min(3600, remainingSeconds); // Increment price gradually for the second hour
-        remainingSeconds -= Math.min(3600, remainingSeconds);
+          (hourlyRates.secondHour / 3600) * Math.min(3600, durationInSeconds);
+        durationInSeconds -= Math.min(3600, durationInSeconds);
         totalHours--;
       }
 
       totalPrice += totalHours * hourlyRates.followingHours;
 
-      // Round the price to two decimal places
-      totalPrice = parseFloat(totalPrice.toFixed(2));
-
-      setPrice(totalPrice);
+      setPrice(parseFloat(totalPrice.toFixed(2)));
     }
   }, [parkedCar, hourlyRates]);
 
   return (
     <div>
-      <h1>Leave Parking Page</h1>
+      <H2>Leave Parking Page</H2>
       <div className="checkoutCard">
         <P>Time : {parkingDuration}</P>
         <Space top="1rem" />
