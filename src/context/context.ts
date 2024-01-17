@@ -23,12 +23,12 @@ export type Vehicle = {
   entryTime: Date;
 };
 
-type ParkedCarsContextType = {
-  parkedCars: Vehicle[];
-  setParkedCars: React.Dispatch<React.SetStateAction<Vehicle[]>>;
+type ParkedCarContextType = {
+  ParkedCar: Vehicle[];
+  setParkedCar: React.Dispatch<React.SetStateAction<Vehicle[]>>;
 };
 
-const ParkedCars = createContext<ParkedCarsContextType | undefined>(undefined);
+const ParkedCar = createContext<ParkedCarContextType | undefined>(undefined);
 
 export type HourlyRatesType = {
   firstHour: number;
@@ -38,4 +38,4 @@ export type HourlyRatesType = {
 
 const HourlyRates = createContext<HourlyRatesType | undefined>(undefined);
 
-export { ParkContext, ParkedCars, HourlyRates };
+export { ParkContext, ParkedCar, HourlyRates };

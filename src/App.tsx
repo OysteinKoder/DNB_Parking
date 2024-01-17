@@ -1,10 +1,10 @@
 import "./App.css";
 import parkData from "./data/parkingData.json";
 import { H, H1, P, Space } from "@dnb/eufemia";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import {
   ParkContext,
-  ParkedCars,
+  ParkedCar,
   HourlyRates,
   HourlyRatesType,
 } from "./context/context";
@@ -29,9 +29,14 @@ function App() {
     if (storedData) {
       return JSON.parse(storedData);
     } else {
-      return parkData; // make sure parkData is an array of ParkData objects
+      return parkData;
     }
   });
+
+  const ParkedCarContext = createContext<{
+    ParkedCar: Vehicle[];
+    setParkedCar: React.Dispatch<React.SetStateAction<Vehicle[]>>;
+  }>({ ParkedCar: [], setParkedCar: () => {} });
 
   const [hourlyRates, setHourlyRates] = useState<HourlyRatesType>(() => {
     const storedRates = localStorage.getItem("hourlyRates");
@@ -40,8 +45,8 @@ function App() {
       : { firstHour: 30, secondHour: 15, followingHours: 5 };
   });
 
-  const [parkedCars, setParkedCars] = useState<Vehicle[]>(() => {
-    const storedCars = localStorage.getItem("parkedCars");
+  const [ParkedCar, setParkedCar] = useState<Vehicle[]>(() => {
+    const storedCars = localStorage.getItem("ParkedCar");
     return storedCars ? JSON.parse(storedCars) : [];
   });
 
@@ -56,7 +61,7 @@ function App() {
   // renders page if parkingData is present\
   return data ? (
     <ParkContext.Provider value={{ data, setData }}>
-      <ParkedCars.Provider value={{ parkedCars, setParkedCars }}>
+      <ParkedCarContext.Provider value={{ ParkedCar, setParkedCar }}>
         <HourlyRates.Provider value={{ hourlyRates, setHourlyRates }}>
           <BrowserRouter basename="">
             <div className="pageContainer">
@@ -70,7 +75,7 @@ function App() {
             </div>
           </BrowserRouter>
         </HourlyRates.Provider>
-      </ParkedCars.Provider>
+      </ParkedCarContext.Provider>
     </ParkContext.Provider>
   ) : (
     <P>Loading</P>

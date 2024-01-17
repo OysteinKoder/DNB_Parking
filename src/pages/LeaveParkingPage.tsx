@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function LeaveParkingPage() {
-  const [parkedCars, setParkedCars] = useState(() => {
-    const savedParkedCars = localStorage.getItem("parkedCars");
-    return savedParkedCars ? JSON.parse(savedParkedCars) : [];
+  const [parkedCar, setparkedCar] = useState(() => {
+    const savedparkedCar = localStorage.getItem("parkedCar");
+    return savedparkedCar ? JSON.parse(savedparkedCar) : [];
   });
 
   const [hourlyRates, setHourlyRates] = useState<HourlyRatesType>(() => {
@@ -49,14 +49,14 @@ function LeaveParkingPage() {
   }, [parkingDuration, hourlyRates, testTime]);
 
   useEffect(() => {
-    if (parkedCars[0]) {
+    if (parkedCar[0]) {
       const currentTime = new Date().getTime();
-      const entryTime = new Date(parkedCars[0].entryTime).getTime();
+      const entryTime = new Date(parkedCar[0].entryTime).getTime();
       const duration = currentTime - entryTime;
       // Convert the duration from milliseconds to hours
       setParkingDuration(Math.round(duration / 1000 / 60 / 60));
     }
-  }, [parkedCars]);
+  }, [parkedCar]);
   return (
     <div>
       <h1>Leave Parking Page</h1>

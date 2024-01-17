@@ -11,12 +11,16 @@ function ChooseParkingPage() {
   const contextValue = useContext(ParkContext);
 
   // Initialize previousSpot state
-  const [previousSpot, setPreviousSpot] = useState<number | null>(null);
+  // Initialize previousSpot state from local storage or to null
+  const [previousSpot, setPreviousSpot] = useState<number | null>(() => {
+    const savedPreviousSpot = localStorage.getItem("previousSpot");
+    return savedPreviousSpot ? JSON.parse(savedPreviousSpot) : null;
+  });
 
-  // Initialize parkedCars state from local storage or to an empty array
-  const [parkedCars, setParkedCars] = useState(() => {
-    const savedParkedCars = localStorage.getItem("parkedCars");
-    return savedParkedCars ? JSON.parse(savedParkedCars) : [];
+  // Initialize parkedCar state from local storage or to an empty array
+  const [parkedCar, setParkedCar] = useState<Vehicle[]>(() => {
+    const savedparkedCar = localStorage.getItem("parkedCar");
+    return savedparkedCar ? JSON.parse(savedparkedCar) : [];
   });
 
   // Initialize navigate function
@@ -60,7 +64,9 @@ function ChooseParkingPage() {
     setData(newDatas);
 
     // Update the previous spot
+    // Update the previous spot
     setPreviousSpot(spotIdx);
+    localStorage.setItem("previousSpot", JSON.stringify(spotIdx)); // Update localStorage immediately
 
     // Create a new vehicle object
     const newVehicle: Vehicle = {
@@ -70,21 +76,23 @@ function ChooseParkingPage() {
       entryTime: new Date(),
     };
 
-    // Add the new vehicle to the parkedCars array and update local storage
-    setParkedCars((prevParkedCars) => {
-      const updatedParkedCars = [...prevParkedCars, newVehicle];
-      localStorage.setItem("parkedCars", JSON.stringify(updatedParkedCars));
-      return updatedParkedCars;
+    console.log("newVehicle:", newVehicle); // Debugging line
+
+    // Add the new vehicle to the parkedCar array
+    setParkedCar(() => {
+      const updatedParkedCar = [newVehicle];
+      localStorage.setItem("parkedCar", JSON.stringify(updatedParkedCar));
+      return updatedParkedCar;
     });
 
     // Navigate to the "/leave-parking" route
     navigate("/leave-parking");
   };
 
-  // Update local storage whenever parkedCars changes
+  // Update local storage whenever parkedCar changes
   useEffect(() => {
-    localStorage.setItem("parkedCars", JSON.stringify(parkedCars));
-  }, [parkedCars]);
+    localStorage.setItem("parkedCar", JSON.stringify(parkedCar));
+  }, [parkedCar]);
 
   useEffect(() => {
     localStorage.setItem("previousSpot", JSON.stringify(previousSpot));
