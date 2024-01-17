@@ -2,26 +2,17 @@ import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
 import { Anchor, Button } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { useContext, useState, useEffect } from "react";
-import { ParkContext, Vehicle } from "../context/context";
+import { useContext, useEffect, useState } from "react";
+import { ParkContext } from "../context/context";
 import { useNavigate } from "react-router";
 
 function ChooseParkingPage() {
+  const [parkedCar, setParkedCar] = useState(() => {
+    const savedParkedCar = localStorage.getItem("parkedCar");
+    return savedParkedCar ? JSON.parse(savedParkedCar) : [];
+  });
   // Get context value
   const contextValue = useContext(ParkContext);
-
-  // Initialize previousSpot state
-  // Initialize previousSpot state from local storage or to null
-  const [previousSpot, setPreviousSpot] = useState<number | null>(() => {
-    const savedPreviousSpot = localStorage.getItem("previousSpot");
-    return savedPreviousSpot ? JSON.parse(savedPreviousSpot) : null;
-  });
-
-  // Initialize parkedCar state from local storage or to an empty array
-  const [parkedCar, setParkedCar] = useState<Vehicle[]>(() => {
-    const savedparkedCar = localStorage.getItem("parkedCar");
-    return savedparkedCar ? JSON.parse(savedparkedCar) : [];
-  });
 
   // Initialize navigate function
   const navigate = useNavigate();
@@ -46,11 +37,6 @@ function ChooseParkingPage() {
     // Create a deep copy of data
     const newDatas = JSON.parse(JSON.stringify(data));
 
-    // If a car is already parked, free up the previous spot
-    if (previousSpot !== null) {
-      newDatas[selectedFloor].parkingSpots[previousSpot].freeSpots++;
-    }
-
     // If the selected spot has free spots, decrement the number of free spots
     if (newDatas[selectedFloor].parkingSpots[spotIdx].freeSpots > 0) {
       newDatas[selectedFloor].parkingSpots[spotIdx].freeSpots--;
@@ -60,16 +46,7 @@ function ChooseParkingPage() {
       return;
     }
 
-    // Update the state with the new data
-    setData(newDatas);
-
-    // Update the previous spot
-    // Update the previous spot
-    setPreviousSpot(spotIdx);
-    localStorage.setItem("previousSpot", JSON.stringify(spotIdx)); // Update localStorage immediately
-
-    // Create a new vehicle object
-    const newVehicle: Vehicle = {
+    const newVehicle = {
       id: Math.random().toString(),
       parkingFloor: selectedFloor,
       parkingType: newDatas[selectedFloor].parkingSpots[spotIdx].type,
@@ -85,18 +62,16 @@ function ChooseParkingPage() {
       return updatedParkedCar;
     });
 
+    // Update the state with the new data
+    setData(newDatas);
+
     // Navigate to the "/leave-parking" route
     navigate("/leave-parking");
   };
 
-  // Update local storage whenever parkedCar changes
   useEffect(() => {
     localStorage.setItem("parkedCar", JSON.stringify(parkedCar));
   }, [parkedCar]);
-
-  useEffect(() => {
-    localStorage.setItem("previousSpot", JSON.stringify(previousSpot));
-  }, [previousSpot]);
 
   // Render the component
   return (

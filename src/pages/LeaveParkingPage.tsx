@@ -60,10 +60,6 @@ function LeaveParkingPage() {
   return (
     <div>
       <h1>Leave Parking Page</h1>
-      <Anchor icon="chevron_left" iconPosition="left" href="/choose-parking">
-        {" "}
-        Back
-      </Anchor>
       <div className="checkoutCard">
         <P>Time : {testTime !== 0 ? testTime : parkingDuration} hours</P>
         <Space top="1rem" />
