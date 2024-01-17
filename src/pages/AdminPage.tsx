@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { Anchor, H3 } from "@dnb/eufemia";
-import { HourlyRatesType, ParkData } from "../context/context";
+import { ParkData } from "../context/context";
 import parkData from "../data/parkingData.json";
 
 function AdminPage() {
-  const [hourlyRates, setHourlyRates] = useState({
-    firstHour: 50,
-    secondHour: 30,
-    followingHours: 10,
+  const [hourlyRates, setHourlyRates] = useState(() => {
+    const storedRates = localStorage.getItem("hourlyRates");
+    if (storedRates) {
+      return JSON.parse(storedRates);
+    } else {
+      // the price of 50 - 30 - 10 as in the task description makes it so that there are situations where the earnings go down if the car stays longer
+      // so I changed it to 50 - 40 - 25 to ensure that the earnings always go up if a car is parked for longer
+      return {
+        firstHour: 50,
+        secondHour: 40,
+        followingHours: 25,
+      };
+    }
   });
 
   const [totalCapacity, setTotalCapacity] = useState({
@@ -29,7 +38,7 @@ function AdminPage() {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setHourlyRates({
       ...hourlyRates,
-      [event.target.name]: event.target.value,
+      [event.target.name]: parseFloat(event.target.value),
     });
   };
 
@@ -40,7 +49,40 @@ function AdminPage() {
 
   const calculateEarnings = () => {
     let totalEarnings = 0;
+    const parkedCarsData = JSON.parse(localStorage.getItem("parkedCar")) || [];
 
+    // earnings for each car parked
+    parkedCarsData.forEach((car: any) => {
+      const { parkingType, entryTime } = car;
+
+      // Calculate the duration in minutes
+      const duration = Math.ceil(
+        (new Date().getTime() - new Date(entryTime).getTime()) / (1000 * 60)
+      );
+
+      // Calculate earnings based on the per-minute rates and duration
+      let earnings = 0;
+      if (duration > 0) {
+        if (duration <= 60) {
+          earnings = (hourlyRates.firstHour / 60) * duration; // Increment earnings every minute for the first hour
+        } else {
+          earnings += hourlyRates.firstHour; // Add the earnings for the first hour
+          if (duration <= 120) {
+            earnings += (hourlyRates.secondHour / 60) * (duration - 60); // Increment earnings every minute for the second hour
+          } else {
+            earnings += hourlyRates.secondHour; // Add the earnings for the second hour
+            earnings += ((duration - 120) * hourlyRates.followingHours) / 60; // Increment earnings every minute for the following hours
+          }
+        }
+      }
+
+      totalEarnings += earnings;
+    });
+
+    // Round totalEarnings to two decimal places
+    totalEarnings = parseFloat(totalEarnings.toFixed(2));
+
+    // earnings for each "dummy" car parked
     Object.values(data).forEach((floor: any) => {
       if (floor.parkingSpots) {
         floor.parkingSpots.forEach((spot: any) => {
@@ -81,6 +123,28 @@ function AdminPage() {
 
   const handleCapacitySubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    // Get parkingData from localStorage
+    const parkingData = JSON.parse(localStorage.getItem("parkingData") || "[]");
+
+    // Update parkingData
+    const updatedParkingData = parkingData.map((floor: any) => ({
+      ...floor,
+      parkingSpots: floor.parkingSpots.map((spot: any) => {
+        if (totalCapacity[spot.type] !== undefined) {
+          return {
+            ...spot,
+            freeSpots: totalCapacity[spot.type],
+          };
+        }
+        return spot;
+      }),
+    }));
+
+    // Save updated parkingData to localStorage
+    localStorage.setItem("parkingData", JSON.stringify(updatedParkingData));
+
+    // Save totalCapacity to localStorage
     localStorage.setItem("totalCapacity", JSON.stringify(totalCapacity));
   };
 
