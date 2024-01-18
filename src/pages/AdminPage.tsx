@@ -22,8 +22,6 @@ function AdminPage() {
     if (storedRates) {
       return JSON.parse(storedRates);
     } else {
-      // the price of 50 - 30 - 10 as in the task description makes it so that there are situations where the earnings go down if the car stays longer
-      // so I changed it to 50 - 40 - 25 to ensure that the earnings always go up if a car is parked for longer
       return {
         firstHour: 50,
         secondHour: 40,
@@ -145,8 +143,6 @@ function AdminPage() {
   const handleCapacitySubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Assuming totalCapacity is an object in your state that looks like this:
-    // { Normal: number, Hc: number, Ev: number, Family: number }
     const updatedTotalCapacity = {
       Normal: Number(event.currentTarget.Normal.value),
       Hc: Number(event.currentTarget.Hc.value),

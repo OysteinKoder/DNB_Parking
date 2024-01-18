@@ -4,7 +4,6 @@ export interface Spot {
   parkingSpots: any;
   type: SpotType;
   freeSpots: number;
-  // add more properties here
 }
 
 export type Vehicle = {
@@ -31,7 +30,6 @@ export type HourlyRatesType = {
 
 export type Floor = {
   parkingSpots: Spot[];
-  // other properties...
 };
 
 export type FloorComponentProps = {
