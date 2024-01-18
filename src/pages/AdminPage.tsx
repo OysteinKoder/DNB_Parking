@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Input, FormSet, Button, Anchor } from "@dnb/eufemia/components";
+import { Anchor } from "@dnb/eufemia/components";
 import parkData from "../data/parkingData.json";
 import { Spot } from "../types/types";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { FaCar, FaWheelchair } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { FormLabel, P } from "@dnb/eufemia";
-import { Form } from "react-router-dom";
+import { P } from "@dnb/eufemia";
 
 function AdminPage() {
   const [parkedCars] = useState<Spot[]>(() => {
@@ -33,11 +32,20 @@ function AdminPage() {
     }
   });
 
-  const [totalCapacity, setTotalCapacity] = useState({
-    Normal: 50,
-    Hc: 3,
-    Ev: 10,
-    Family: 5,
+  const [totalCapacity, setTotalCapacity] = useState(() => {
+    const storedCapacity = localStorage.getItem("totalCapacity");
+    if (storedCapacity) {
+      return JSON.parse(storedCapacity);
+    } else {
+      const initialCapacity = {
+        Normal: 50,
+        Hc: 3,
+        Ev: 10,
+        Family: 5,
+      };
+      localStorage.setItem("totalCapacity", JSON.stringify(initialCapacity));
+      return initialCapacity;
+    }
   });
 
   const [data] = useState<Spot[]>(() => {
@@ -134,11 +142,23 @@ function AdminPage() {
     });
   };
 
-  const handleCapacitySubmit = (event: React.FormEvent) => {
+  const handleCapacitySubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Update total capacity in local storage
-    localStorage.setItem("totalCapacity", JSON.stringify(totalCapacity));
+    // Assuming totalCapacity is an object in your state that looks like this:
+    // { Normal: number, Hc: number, Ev: number, Family: number }
+    const updatedTotalCapacity = {
+      Normal: Number(event.currentTarget.Normal.value),
+      Hc: Number(event.currentTarget.Hc.value),
+      Ev: Number(event.currentTarget.Ev.value),
+      Family: Number(event.currentTarget.Family.value),
+    };
+
+    // Update totalCapacity in the state
+    setTotalCapacity(updatedTotalCapacity);
+
+    // Update totalCapacity in the localStorage
+    localStorage.setItem("totalCapacity", JSON.stringify(updatedTotalCapacity));
   };
 
   return (
@@ -165,40 +185,36 @@ function AdminPage() {
           {/* Add more rates here if necessary */}
         </div>
       </div>
-      <FormSet onSubmit={handleSubmit} className="ratesCapacityCard">
-        {/* <FormLabel>
-          First Hour
-          <Input
+      <form onSubmit={handleSubmit} className="floorCard">
+        <label>
+          First Hour Rate:
+          <input
             type="number"
             name="firstHour"
             value={hourlyRates.firstHour}
             onChange={handleChange}
           />
-        </FormLabel> */}
-        <FormLabel>First Hour</FormLabel>
-        <Input
-          type="number"
-          name="firstHour"
-          value={hourlyRates.firstHour}
-          onChange={handleChange}
-        />
-
-        <FormLabel>Second Hour</FormLabel>
-        <Input
-          type="number"
-          name="secondHour"
-          value={hourlyRates.secondHour}
-          onChange={handleChange}
-        />
-        <FormLabel>Following Hours</FormLabel>
-        <Input
-          type="number"
-          name="followingHours"
-          value={hourlyRates.followingHours}
-          onChange={handleChange}
-        />
-        <Input type="submit" value="Update Rates" top="1rem" />
-      </FormSet>
+        </label>
+        <label>
+          Second Hour Rate:
+          <input
+            type="number"
+            name="secondHour"
+            value={hourlyRates.secondHour}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Following Hours Rate:
+          <input
+            type="number"
+            name="followingHours"
+            value={hourlyRates.followingHours}
+            onChange={handleChange}
+          />
+        </label>
+        <button type="submit">Save Rates</button>
+      </form>
       <h3>Change Capacity</h3>
       <div className="capacityCard">
         <P> Max Capacity per P:</P>
@@ -221,37 +237,45 @@ function AdminPage() {
           </P>
         </div>
       </div>
-      <FormSet onSubmit={handleCapacitySubmit} className="ratesCapacityCard">
-        <FormLabel>Normal:</FormLabel>
-        <Input
-          type="number"
-          name="Normal"
-          value={totalCapacity.Normal}
-          onChange={handleCapacityChange}
-        />
-        <FormLabel>Hc:</FormLabel>
-        <Input
-          type="number"
-          name="Hc"
-          value={totalCapacity.Hc}
-          onChange={handleCapacityChange}
-        />
-        <FormLabel>Ev:</FormLabel>
-        <Input
-          type="number"
-          name="Ev"
-          value={totalCapacity.Ev}
-          onChange={handleCapacityChange}
-        />
-        <FormLabel>Family:</FormLabel>
-        <Input
-          type="number"
-          name="Family"
-          value={totalCapacity.Family}
-          onChange={handleCapacityChange}
-        />
-        <Input type="submit" value="Update Total Capacity" top="1rem" />
-      </FormSet>
+      <form onSubmit={handleCapacitySubmit} className="floorCard">
+        <label>
+          Normal:
+          <input
+            type="number"
+            name="Normal"
+            value={totalCapacity.Normal}
+            onChange={handleCapacityChange}
+          />
+        </label>
+        <label>
+          Hc:
+          <input
+            type="number"
+            name="Hc"
+            value={totalCapacity.Hc}
+            onChange={handleCapacityChange}
+          />
+        </label>
+        <label>
+          Ev:
+          <input
+            type="number"
+            name="Ev"
+            value={totalCapacity.Ev}
+            onChange={handleCapacityChange}
+          />
+        </label>
+        <label>
+          Family:
+          <input
+            type="number"
+            name="Family"
+            value={totalCapacity.Family}
+            onChange={handleCapacityChange}
+          />
+        </label>
+        <input type="submit" value="Update Total Capacity" />
+      </form>
     </div>
   );
 }
