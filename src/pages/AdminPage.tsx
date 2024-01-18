@@ -32,7 +32,7 @@ function AdminPage() {
     Normal: 50,
     Hc: 3,
     Ev: 10,
-    Family: 5, // Assuming there's no charge for Family type
+    Family: 5,
   });
 
   const [data] = useState<Spot[]>(() => {
@@ -132,32 +132,7 @@ function AdminPage() {
   const handleCapacitySubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    // Get parkingData from localStorage
-    const parkingDataObject = JSON.parse(
-      localStorage.getItem("parkingData") || "[]"
-    );
-    const parkingDataArray = Array.isArray(parkingDataObject)
-      ? parkingDataObject
-      : parkData;
-
-    // Update parkingData
-    const updatedParkingData = parkingDataArray.map((floor: any) => ({
-      ...floor,
-      parkingSpots: floor.parkingSpots.map((spot: Spot) => {
-        if (totalCapacity[spot.type] !== undefined) {
-          return {
-            ...spot,
-            freeSpots: totalCapacity[spot.type],
-          };
-        }
-        return spot;
-      }),
-    }));
-
-    // Save updated parkingData to localStorage
-    localStorage.setItem("parkingData", JSON.stringify(updatedParkingData));
-
-    // Save totalCapacity to localStorage
+    // Update total capacity in local storage
     localStorage.setItem("totalCapacity", JSON.stringify(totalCapacity));
   };
 
@@ -165,7 +140,7 @@ function AdminPage() {
     <div>
       <h1>Admin Page</h1>
       <Anchor href="/">Back</Anchor>
-      <h2>Total Earnings: {calculateEarnings(data)}</h2>
+      <h2>Total Earnings: {calculateEarnings()}</h2>
       <form onSubmit={handleSubmit} className="floorCard">
         <label>
           First Hour Rate:
