@@ -20,6 +20,14 @@
   --dnb_mintGreen: #a5e1d2;
 }
 
+input {
+  color: black;
+  background-color: white;
+  border-radius: 5px;
+  padding: 0.25rem;
+  text-align: center;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -39,6 +47,11 @@ body {
   border-radius: 5px;
   padding: 1rem;
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.497);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
 }
 
 .floorCard {

@@ -5,7 +5,7 @@ import { Spot } from "../types/types";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { FaCar, FaWheelchair } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { P } from "@dnb/eufemia";
+import { Button, P, Space } from "@dnb/eufemia";
 
 function AdminPage() {
   const [parkedCars] = useState<Spot[]>(() => {
@@ -185,9 +185,9 @@ function AdminPage() {
           {/* Add more rates here if necessary */}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="floorCard">
-        <label>
-          First Hour Rate:
+      <form onSubmit={handleSubmit} className="ratesCapacityCard">
+        <label className="column">
+          1 Hr:
           <input
             type="number"
             name="firstHour"
@@ -195,17 +195,19 @@ function AdminPage() {
             onChange={handleChange}
           />
         </label>
-        <label>
-          Second Hour Rate:
-          <input
-            type="number"
-            name="secondHour"
-            value={hourlyRates.secondHour}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Following Hours Rate:
+        <div>
+          <label className="column">
+            2 Hr:
+            <input
+              type="number"
+              name="secondHour"
+              value={hourlyRates.secondHour}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
+        <label className="column">
+          After 3rd hour
           <input
             type="number"
             name="followingHours"
@@ -213,7 +215,8 @@ function AdminPage() {
             onChange={handleChange}
           />
         </label>
-        <button type="submit">Save Rates</button>
+        <Space top="1rem" />
+        <Button type="submit">Save Rates</Button>
       </form>
       <h3>Change Capacity</h3>
       <div className="capacityCard">
@@ -237,8 +240,8 @@ function AdminPage() {
           </P>
         </div>
       </div>
-      <form onSubmit={handleCapacitySubmit} className="floorCard">
-        <label>
+      <form onSubmit={handleCapacitySubmit} className="ratesCapacityCard">
+        <label className="column">
           Normal:
           <input
             type="number"
@@ -247,7 +250,7 @@ function AdminPage() {
             onChange={handleCapacityChange}
           />
         </label>
-        <label>
+        <label className="column">
           Hc:
           <input
             type="number"
@@ -256,7 +259,7 @@ function AdminPage() {
             onChange={handleCapacityChange}
           />
         </label>
-        <label>
+        <label className="column">
           Ev:
           <input
             type="number"
@@ -265,7 +268,7 @@ function AdminPage() {
             onChange={handleCapacityChange}
           />
         </label>
-        <label>
+        <label className="column">
           Family:
           <input
             type="number"
@@ -274,7 +277,8 @@ function AdminPage() {
             onChange={handleCapacityChange}
           />
         </label>
-        <input type="submit" value="Update Total Capacity" />
+        <Space top="1rem" />
+        <Button type="submit">Save Capacity</Button>
       </form>
     </div>
   );
