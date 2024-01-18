@@ -1,16 +1,16 @@
 [
   {
     "parkingSpots": [
-      { "type": "Hc", "freeSpots": 5 },
-      { "type": "Family", "freeSpots": 10 },
-      { "type": "Ev", "freeSpots": 3 },
-      { "type": "Normal", "freeSpots": 20 }
+      { "type": "Hc", "freeSpots": 0 },
+      { "type": "Family", "freeSpots": 0 },
+      { "type": "Ev", "freeSpots": 0 },
+      { "type": "Normal", "freeSpots": 0 }
     ]
   },
   {
     "parkingSpots": [
       { "type": "Hc", "freeSpots": 4 },
-      { "type": "Family", "freeSpots": 8 },
+      { "type": "Family", "freeSpots": 0 },
       { "type": "Ev", "freeSpots": 2 },
       { "type": "Normal", "freeSpots": 15 }
     ]
@@ -20,7 +20,7 @@
       { "type": "Hc", "freeSpots": 3 },
       { "type": "Family", "freeSpots": 6 },
       { "type": "Ev", "freeSpots": 1 },
-      { "type": "Normal", "freeSpots": 10 }
+      { "type": "Normal", "freeSpots": 0 }
     ]
   }
 ]

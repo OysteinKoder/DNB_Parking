@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Anchor, H3 } from "@dnb/eufemia";
+import { Input, FormSet, Button, Anchor } from "@dnb/eufemia/components";
 import parkData from "../data/parkingData.json";
 import { Spot } from "../types/types";
+import { AiFillThunderbolt } from "react-icons/ai";
+import { FaCar, FaWheelchair } from "react-icons/fa";
+import { MdFamilyRestroom } from "react-icons/md";
+import { FormLabel, P } from "@dnb/eufemia";
+import { Form } from "react-router-dom";
 
 function AdminPage() {
   const [parkedCars] = useState<Spot[]>(() => {
@@ -137,80 +142,116 @@ function AdminPage() {
   };
 
   return (
-    <div>
+    <div className="center">
       <h1>Admin Page</h1>
       <Anchor href="/">Back</Anchor>
       <h2>Total Earnings: {calculateEarnings()}</h2>
-      <form onSubmit={handleSubmit} className="floorCard">
-        <label>
-          First Hour Rate:
-          <input
+
+      <div className="capacityCard">
+        <P>Current Rates Per Hour:</P>
+        <div className="row">
+          <P>
+            1Hr: {hourlyRates.firstHour}
+            {"  "}
+          </P>
+          <P>
+            2Hr: {hourlyRates.secondHour}
+            {"  "}
+          </P>
+          <P>
+            3Hr - &: {hourlyRates.followingHours}
+            {"  "}
+          </P>
+          {/* Add more rates here if necessary */}
+        </div>
+      </div>
+      <FormSet onSubmit={handleSubmit} className="ratesCapacityCard">
+        {/* <FormLabel>
+          First Hour
+          <Input
             type="number"
             name="firstHour"
             value={hourlyRates.firstHour}
             onChange={handleChange}
           />
-        </label>
-        <label>
-          Second Hour Rate:
-          <input
-            type="number"
-            name="secondHour"
-            value={hourlyRates.secondHour}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Following Hours Rate:
-          <input
-            type="number"
-            name="followingHours"
-            value={hourlyRates.followingHours}
-            onChange={handleChange}
-          />
-        </label>
-        <button type="submit">Save Rates</button>
-      </form>
-      <H3>Change Capacity</H3>
-      <form onSubmit={handleCapacitySubmit} className="floorCard">
-        <label>
-          Normal:
-          <input
-            type="number"
-            name="Normal"
-            value={totalCapacity.Normal}
-            onChange={handleCapacityChange}
-          />
-        </label>
-        <label>
-          Hc:
-          <input
-            type="number"
-            name="Hc"
-            value={totalCapacity.Hc}
-            onChange={handleCapacityChange}
-          />
-        </label>
-        <label>
-          Ev:
-          <input
-            type="number"
-            name="Ev"
-            value={totalCapacity.Ev}
-            onChange={handleCapacityChange}
-          />
-        </label>
-        <label>
-          Family:
-          <input
-            type="number"
-            name="Family"
-            value={totalCapacity.Family}
-            onChange={handleCapacityChange}
-          />
-        </label>
-        <input type="submit" value="Update Total Capacity" />
-      </form>
+        </FormLabel> */}
+        <FormLabel>First Hour</FormLabel>
+        <Input
+          type="number"
+          name="firstHour"
+          value={hourlyRates.firstHour}
+          onChange={handleChange}
+        />
+
+        <FormLabel>Second Hour</FormLabel>
+        <Input
+          type="number"
+          name="secondHour"
+          value={hourlyRates.secondHour}
+          onChange={handleChange}
+        />
+        <FormLabel>Following Hours</FormLabel>
+        <Input
+          type="number"
+          name="followingHours"
+          value={hourlyRates.followingHours}
+          onChange={handleChange}
+        />
+        <Input type="submit" value="Update Rates" top="1rem" />
+      </FormSet>
+      <h3>Change Capacity</h3>
+      <div className="capacityCard">
+        <P> Max Capacity per P:</P>
+        <div className="row">
+          <P>
+            <FaCar />: {totalCapacity.Normal}
+            {"  "}
+          </P>
+          <P>
+            <FaWheelchair />: {totalCapacity.Hc}
+            {"  "}
+          </P>
+          <P>
+            <AiFillThunderbolt />: {totalCapacity.Ev}
+            {"  "}
+          </P>
+          <P>
+            <MdFamilyRestroom />: {totalCapacity.Family}
+            {"  "}
+          </P>
+        </div>
+      </div>
+      <FormSet onSubmit={handleCapacitySubmit} className="ratesCapacityCard">
+        <FormLabel>Normal:</FormLabel>
+        <Input
+          type="number"
+          name="Normal"
+          value={totalCapacity.Normal}
+          onChange={handleCapacityChange}
+        />
+        <FormLabel>Hc:</FormLabel>
+        <Input
+          type="number"
+          name="Hc"
+          value={totalCapacity.Hc}
+          onChange={handleCapacityChange}
+        />
+        <FormLabel>Ev:</FormLabel>
+        <Input
+          type="number"
+          name="Ev"
+          value={totalCapacity.Ev}
+          onChange={handleCapacityChange}
+        />
+        <FormLabel>Family:</FormLabel>
+        <Input
+          type="number"
+          name="Family"
+          value={totalCapacity.Family}
+          onChange={handleCapacityChange}
+        />
+        <Input type="submit" value="Update Total Capacity" top="1rem" />
+      </FormSet>
     </div>
   );
 }

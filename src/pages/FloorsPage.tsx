@@ -42,10 +42,14 @@ function FloorsPage() {
   const renderFloor = (floor: any, floorIdx: number) => (
     <div key={floorIdx}>
       <h3>P {floorIdx + 1}</h3>
-      <div className="floorCard">
+      <div className="floorCard ">
         {floor.parkingSpots.map((spot: any, spotIdx: number) => (
           <div key={spotIdx}>
-            <span className="floorCardText">
+            <span
+              className={`floorCardText ${
+                spot.freeSpots === 0 ? "red" : "green"
+              }`}
+            >
               {spot.type === "Hc" && <FaWheelchair />}
               {spot.type === "Family" && <MdFamilyRestroom />}
               {spot.type === "Ev" && <AiFillThunderbolt />}
@@ -54,7 +58,12 @@ function FloorsPage() {
           </div>
         ))}
       </div>
-      <Button onClick={() => handleClick(floorIdx)}>Select</Button>
+      <Button
+        onClick={() => handleClick(floorIdx)}
+        disabled={floor.parkingSpots.every((spot: any) => spot.freeSpots === 0)}
+      >
+        Select
+      </Button>
       <Space bottom="2.5rem" />
     </div>
   );
@@ -63,24 +72,6 @@ function FloorsPage() {
     <div>
       <h2>Floors</h2>
       <Anchor href="/admin-page">Admin Page</Anchor>
-
-      <div className="capacityCard">
-        <P> Max Capacity per P:</P>
-        <div className="row">
-          <P>
-            <FaCar />: {totalCapacity.Normal}
-          </P>
-          <P>
-            <FaWheelchair />: {totalCapacity.Hc}
-          </P>
-          <P>
-            <AiFillThunderbolt />: {totalCapacity.Ev}
-          </P>
-          <P>
-            <MdFamilyRestroom />: {totalCapacity.Family}
-          </P>
-        </div>
-      </div>
       {data.length === 3
         ? data.slice(0, 3).map(renderFloor)
         : Object.keys(data)
