@@ -1,6 +1,6 @@
 import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { Anchor, Button, P, Space } from "@dnb/eufemia";
+import { Anchor, Button, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { useContext, useState } from "react";
 import { ParkContext } from "../context/context";
