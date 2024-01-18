@@ -1,12 +1,30 @@
 import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { Anchor, Button, Space } from "@dnb/eufemia";
+import { Anchor, Button, P, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ParkContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
 
 function FloorsPage() {
+  const [totalCapacity] = useState(() => {
+    const storedCapacity = localStorage.getItem("totalCapacity");
+    if (storedCapacity) {
+      return JSON.parse(storedCapacity);
+    } else {
+      const initialCapacity = {
+        Normal: 50,
+        Hc: 3,
+        Ev: 10,
+        Family: 5,
+      };
+      localStorage.setItem("totalCapacity", JSON.stringify(initialCapacity));
+      return initialCapacity;
+    }
+  });
+
+  console.log(totalCapacity);
+
   const contextValue = useContext(ParkContext);
   const navigate = useNavigate();
 
@@ -45,6 +63,24 @@ function FloorsPage() {
     <div>
       <h2>Floors</h2>
       <Anchor href="/admin-page">Admin Page</Anchor>
+
+      <div className="capacityCard">
+        <P> Max Capacity per P:</P>
+        <div className="row">
+          <P>
+            <FaCar />: {totalCapacity.Normal}
+          </P>
+          <P>
+            <FaWheelchair />: {totalCapacity.Hc}
+          </P>
+          <P>
+            <AiFillThunderbolt />: {totalCapacity.Ev}
+          </P>
+          <P>
+            <MdFamilyRestroom />: {totalCapacity.Family}
+          </P>
+        </div>
+      </div>
       {data.length === 3
         ? data.slice(0, 3).map(renderFloor)
         : Object.keys(data)
