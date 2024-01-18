@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { Anchor, H3 } from "@dnb/eufemia";
-import { ParkData } from "../context/context";
 import parkData from "../data/parkingData.json";
+import { Spot } from "../types/types";
 
 function AdminPage() {
+  const [parkedCars] = useState<Spot[]>(() => {
+    const storedData = localStorage.getItem("parkingData");
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      return Array.isArray(parsedData) ? parsedData : parkData;
+    } else {
+      return parkData;
+    }
+  });
   const [hourlyRates, setHourlyRates] = useState(() => {
     const storedRates = localStorage.getItem("hourlyRates");
     if (storedRates) {
@@ -26,7 +35,7 @@ function AdminPage() {
     Family: 5, // Assuming there's no charge for Family type
   });
 
-  const [data, setData] = useState<ParkData[]>(() => {
+  const [data, setData] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkingData");
     if (storedData) {
       return JSON.parse(storedData);
@@ -49,11 +58,10 @@ function AdminPage() {
 
   const calculateEarnings = () => {
     let totalEarnings = 0;
-    const parkedCarsData = JSON.parse(localStorage.getItem("parkedCar")) || [];
 
     // earnings for each car parked
-    parkedCarsData.forEach((car: any) => {
-      const { parkingType, entryTime } = car;
+    parkedCars.forEach((car: any) => {
+      const { entryTime } = car;
 
       // Calculate the duration in minutes
       const duration = Math.ceil(
@@ -85,7 +93,7 @@ function AdminPage() {
     // earnings for each "dummy" car parked
     Object.values(data).forEach((floor: any) => {
       if (floor.parkingSpots) {
-        floor.parkingSpots.forEach((spot: any) => {
+        floor.parkingSpots.forEach((spot: Spot) => {
           const numParkedCars = totalCapacity[spot.type] - spot.freeSpots;
 
           if (Number.isInteger(numParkedCars) && numParkedCars > 0) {
@@ -130,7 +138,7 @@ function AdminPage() {
     // Update parkingData
     const updatedParkingData = parkingData.map((floor: any) => ({
       ...floor,
-      parkingSpots: floor.parkingSpots.map((spot: any) => {
+      parkingSpots: floor.parkingSpots.map((spot: Spot) => {
         if (totalCapacity[spot.type] !== undefined) {
           return {
             ...spot,

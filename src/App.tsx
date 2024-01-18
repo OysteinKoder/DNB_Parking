@@ -1,26 +1,17 @@
 import "./App.css";
 import parkData from "./data/parkingData.json";
-import { Anchor, H1, P, Space } from "@dnb/eufemia";
+import { H1, P, Space } from "@dnb/eufemia";
 import { createContext, useEffect, useState } from "react";
-import { ParkContext, HourlyRates, HourlyRatesType } from "./context/context";
+import { ParkContext, HourlyRates } from "./context/context";
 import FloorsPage from "./pages/FloorsPage";
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ChooseParkingPage from "./pages/ChooseParkingPage";
-import { Vehicle } from "./context/context";
 import LeaveParkingPage from "./pages/LeaveParkingPage";
 import AdminPage from "./pages/AdminPage";
-
-type ParkingSpot = {
-  type: string;
-  freeSpots: number;
-};
-
-type ParkData = {
-  parkingSpots: ParkingSpot[];
-};
+import { HourlyRatesType, Spot, Vehicle } from "./types/types";
 
 function App() {
-  const [data, setData] = useState<ParkData[]>(() => {
+  const [data, setData] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkingData");
     if (storedData) {
       return JSON.parse(storedData);
@@ -38,7 +29,7 @@ function App() {
     const storedRates = localStorage.getItem("hourlyRates");
     return storedRates
       ? JSON.parse(storedRates)
-      : { firstHour: 50, secondHour: 30, followingHours: 10 };
+      : { firstHour: 50, secondHour: 40, followingHours: 25 };
   });
 
   const [ParkedCar, setParkedCar] = useState<Vehicle[]>(() => {
