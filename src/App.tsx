@@ -2,7 +2,7 @@ import "./App.css";
 import parkData from "./data/parkingData.json";
 import { H1, P, Space } from "@dnb/eufemia";
 import { createContext, useEffect, useState } from "react";
-import { ParkContext, HourlyRates } from "./context/context";
+import { ParkContext, HourlyRatesContext } from "./context/context";
 import FloorsPage from "./pages/FloorsPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ChooseParkingPage from "./pages/ChooseParkingPage";
@@ -49,7 +49,7 @@ function App() {
   return data ? (
     <ParkContext.Provider value={{ data, setData }}>
       <ParkedCarContext.Provider value={{ ParkedCar, setParkedCar }}>
-        <HourlyRates.Provider value={{ hourlyRates, setHourlyRates }}>
+        <HourlyRatesContext.Provider value={{ hourlyRates, setHourlyRates }}>
           <BrowserRouter basename="">
             <div className="pageContainer">
               <H1>DNB Park</H1>
@@ -63,7 +63,7 @@ function App() {
               </Routes>
             </div>
           </BrowserRouter>
-        </HourlyRates.Provider>
+        </HourlyRatesContext.Provider>
       </ParkedCarContext.Provider>
     </ParkContext.Provider>
   ) : (

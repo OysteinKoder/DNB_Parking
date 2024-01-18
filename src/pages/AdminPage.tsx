@@ -35,7 +35,7 @@ function AdminPage() {
     Family: 5, // Assuming there's no charge for Family type
   });
 
-  const [data, setData] = useState<Spot[]>(() => {
+  const [data] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkingData");
     if (storedData) {
       return JSON.parse(storedData);
@@ -133,10 +133,15 @@ function AdminPage() {
     event.preventDefault();
 
     // Get parkingData from localStorage
-    const parkingData = JSON.parse(localStorage.getItem("parkingData") || "[]");
+    const parkingDataObject = JSON.parse(
+      localStorage.getItem("parkingData") || "[]"
+    );
+    const parkingDataArray = Array.isArray(parkingDataObject)
+      ? parkingDataObject
+      : parkData;
 
     // Update parkingData
-    const updatedParkingData = parkingData.map((floor: any) => ({
+    const updatedParkingData = parkingDataArray.map((floor: any) => ({
       ...floor,
       parkingSpots: floor.parkingSpots.map((spot: Spot) => {
         if (totalCapacity[spot.type] !== undefined) {
