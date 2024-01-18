@@ -36,3 +36,26 @@ export type FloorComponentProps = {
   data: Floor[];
   handleClick: (floorIndex: number, spotIndex: number) => void;
 };
+
+export type RatesFormProps = {
+  hourlyRates: HourlyRatesType;
+  handleRateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleRateSubmit: (event: React.FormEvent) => void;
+};
+
+interface totalCapacity {
+  Normal: number;
+  Hc: number;
+  Ev: number;
+  Family: number;
+}
+
+export type CapacityDisplayType = {
+  totalCapacity: totalCapacity;
+};
+
+export type CapacityFormProps = {
+  totalCapacity: totalCapacity;
+  handleCapacityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCapacitySubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+};
