@@ -2,36 +2,16 @@ import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
 import { Anchor, Button, Space } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { ParkContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
 
 function FloorsPage() {
-  const [totalCapacity] = useState(() => {
-    const storedCapacity = localStorage.getItem("totalCapacity");
-    if (storedCapacity) {
-      return JSON.parse(storedCapacity);
-    } else {
-      const initialCapacity = {
-        Normal: 50,
-        Hc: 3,
-        Ev: 10,
-        Family: 5,
-      };
-      localStorage.setItem("totalCapacity", JSON.stringify(initialCapacity));
-      return initialCapacity;
-    }
-  });
-
-  console.log(totalCapacity);
-
   const contextValue = useContext(ParkContext);
   const navigate = useNavigate();
-
   if (!contextValue) {
     throw new Error("ParkContext is undefined");
   }
-
   const { data, setData } = contextValue;
 
   const handleClick = (floorIdx: number) => {

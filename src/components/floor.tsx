@@ -11,8 +11,6 @@ function Floors() {
   const { data, setData } = contextValue;
 
   const handleClick = (floorIdx: number, spotIdx: number) => {
-    console.log("floorIdx:", floorIdx);
-    console.log("spotIdx:", spotIdx);
     setData((prevData) => {
       // New array with the updated parking data and free spots
       const updatedData = prevData.map((floor, index) => {
