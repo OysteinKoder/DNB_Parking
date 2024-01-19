@@ -1,15 +1,20 @@
-import { useState } from "react";
-import { Anchor } from "@dnb/eufemia/components";
 import parkData from "../data/parkingData.json";
-import { Spot } from "../types/types";
 import RatesDisplay from "../components/RatesDisplay";
 import RatesForm from "../components/RatesForm";
 import CapacityDisplay from "../components/CapacityDisplay";
 import CapacityForm from "../components/CapacityForm";
+import { useState } from "react";
+import { Anchor } from "@dnb/eufemia/components";
+import { Spot } from "../types/types";
+import {
+  initialCapacity,
+  initialRates,
+} from "../data/initialRates_initialCapacity";
 
 function AdminPage() {
+  // Fetches States from localStorage if they exist, otherwise sets them to default values
   const [parkedCars] = useState<Spot[]>(() => {
-    const storedData = localStorage.getItem("parkingData");
+    const storedData = localStorage.getItem("parkedCar");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       return Array.isArray(parsedData) ? parsedData : parkData;
@@ -23,9 +28,7 @@ function AdminPage() {
       return JSON.parse(storedRates);
     } else {
       return {
-        firstHour: 50,
-        secondHour: 40,
-        followingHours: 25,
+        initialRates,
       };
     }
   });
@@ -35,12 +38,6 @@ function AdminPage() {
     if (storedCapacity) {
       return JSON.parse(storedCapacity);
     } else {
-      const initialCapacity = {
-        Normal: 50,
-        Hc: 3,
-        Ev: 10,
-        Family: 5,
-      };
       localStorage.setItem("totalCapacity", JSON.stringify(initialCapacity));
       return initialCapacity;
     }
@@ -67,70 +64,68 @@ function AdminPage() {
     localStorage.setItem("hourlyRates", JSON.stringify(hourlyRates));
   };
 
+  // Calculate earnings for each parkedCar and dummy cars
   const calculateEarnings = () => {
     let totalEarnings = 0;
 
-    // earnings for each car parked
-    parkedCars.forEach((car: any) => {
-      const { entryTime } = car;
-
-      // Calculate the duration in minutes
-      const duration = Math.ceil(
-        (new Date().getTime() - new Date(entryTime).getTime()) / (1000 * 60)
-      );
-
-      // Calculate earnings based on the per-minute rates and duration
-      let earnings = 0;
+    // ParkedCars would come from backend in a real use-case and there would be no limitation on the number of cars.
+    // On the client side the user is limited to only one parked car.
+    const calculateParkedCarsEarnings = (duration: number) => {
+      let earnings: number | string = 0;
       if (duration > 0) {
-        if (duration <= 60) {
-          earnings = (hourlyRates.firstHour / 60) * duration; // Increment earnings every minute for the first hour
-        } else {
-          earnings += hourlyRates.firstHour; // Add the earnings for the first hour
-          if (duration <= 120) {
-            earnings += (hourlyRates.secondHour / 60) * (duration - 60); // Increment earnings every minute for the second hour
-          } else {
-            earnings += hourlyRates.secondHour; // Add the earnings for the second hour
-            earnings += ((duration - 120) * hourlyRates.followingHours) / 60; // Increment earnings every minute for the following hours
-          }
+        if (duration >= 1) {
+          earnings += hourlyRates.firstHour;
+          duration--;
+        }
+        if (duration >= 1) {
+          earnings += hourlyRates.secondHour;
+          duration--;
+        }
+        if (duration > 0) {
+          earnings += duration * hourlyRates.followingHours;
         }
       }
+      return earnings;
+    };
 
-      totalEarnings += earnings;
+    // Earnings for each parkedCar, this is future-proofing the app for the case when there are multiple parked cars from backend.
+    parkedCars.forEach((car: any) => {
+      const { entryTime } = car;
+      const duration = Math.ceil(
+        (new Date().getTime() - new Date(entryTime).getTime()) /
+          (1000 * 60 * 60)
+      );
+      totalEarnings += calculateParkedCarsEarnings(duration);
     });
-
-    // Round totalEarnings to two decimal places
     totalEarnings = parseFloat(totalEarnings.toFixed(2));
 
-    // earnings for each "dummy" car parked
+    // Earnings for each parking spot ("dummy cars")
+    // Would not be needed in a real use-case since all parked cars would be from backend.
+    // Is calculated based on the total capacity of each type of parking spot -  freeSpots.
     Object.values(data).forEach((floor: any) => {
       if (floor.parkingSpots) {
         floor.parkingSpots.forEach((spot: Spot) => {
           const numParkedCars = totalCapacity[spot.type] - spot.freeSpots;
-
           if (Number.isInteger(numParkedCars) && numParkedCars > 0) {
             const parkedCars = Array(numParkedCars)
               .fill(0)
               .map(() => ({
-                duration: 3, // Set duration to 3 hours
+                duration: 3,
               }));
-
             parkedCars.forEach((car: any) => {
-              if (car.duration === 1) {
-                totalEarnings += hourlyRates.firstHour;
-              } else if (car.duration === 2) {
-                totalEarnings += hourlyRates.secondHour;
-              } else if (car.duration > 2) {
-                totalEarnings +=
-                  hourlyRates.secondHour +
-                  (car.duration - 2) * hourlyRates.followingHours;
-              }
+              totalEarnings += calculateParkedCarsEarnings(car.duration);
             });
           }
         });
       }
     });
 
-    return totalEarnings;
+    //
+    totalEarnings = parseFloat(totalEarnings.toFixed(2));
+    return totalEarnings.toLocaleString("no-NO", {
+      style: "currency",
+      currency: "NOK",
+    });
   };
 
   const handleCapacityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,18 +137,13 @@ function AdminPage() {
 
   const handleCapacitySubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const updatedTotalCapacity = {
       Normal: Number(event.currentTarget.Normal.value),
       Hc: Number(event.currentTarget.Hc.value),
       Ev: Number(event.currentTarget.Ev.value),
       Family: Number(event.currentTarget.Family.value),
     };
-
-    // Update totalCapacity in the state
     setTotalCapacity(updatedTotalCapacity);
-
-    // Update totalCapacity in the localStorage
     localStorage.setItem("totalCapacity", JSON.stringify(updatedTotalCapacity));
   };
 

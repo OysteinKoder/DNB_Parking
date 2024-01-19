@@ -1,13 +1,13 @@
 import "./App.css";
 import parkData from "./data/parkingData.json";
-import { H1, P, Space } from "@dnb/eufemia";
-import { createContext, useEffect, useState } from "react";
-import { ParkContext, HourlyRatesContext } from "./context/context";
 import FloorsPage from "./pages/FloorsPage";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ChooseParkingPage from "./pages/ChooseParkingPage";
 import LeaveParkingPage from "./pages/LeaveParkingPage";
 import AdminPage from "./pages/AdminPage";
+import { H1, P, Space } from "@dnb/eufemia";
+import { createContext, useEffect, useState } from "react";
+import { ParkContext, HourlyRatesContext } from "./context/context";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HourlyRatesType, Spot, Vehicle } from "./types/types";
 
 function App() {
