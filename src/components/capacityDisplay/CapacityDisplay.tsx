@@ -1,8 +1,9 @@
+import "./style.css";
 import { P } from "@dnb/eufemia";
 import { AiFillThunderbolt } from "react-icons/ai";
 import { FaCar, FaWheelchair } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
-import { CapacityDisplayType } from "../types/types";
+import { CapacityDisplayType } from "../../types/types";
 
 const CapacityDisplay: React.FC<CapacityDisplayType> = ({ totalCapacity }) => (
   <div className="capacityCard">

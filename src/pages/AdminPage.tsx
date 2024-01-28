@@ -1,7 +1,7 @@
 import parkData from "../data/parkingData.json";
 import RatesDisplay from "../components/RatesDisplay";
 import RatesForm from "../components/RatesForm";
-import CapacityDisplay from "../components/CapacityDisplay";
+import CapacityDisplay from "../components/capacityDisplay/CapacityDisplay";
 import CapacityForm from "../components/CapacityForm";
 import { useState } from "react";
 import { Anchor } from "@dnb/eufemia/components";
