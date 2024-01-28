@@ -5,7 +5,7 @@ import { Spot } from "../types/types";
 
 const SpotComponent = ({ spot }: { spot: Spot }) => (
   <div>
-    <span className={`floorCardText ${spot.freeSpots === 0 ? "red" : "green"}`}>
+    <span className={`textMargin ${spot.freeSpots === 0 ? "red" : "green"}`}>
       {spot.type === "Hc" && <FaWheelchair />}
       {spot.type === "Family" && <MdFamilyRestroom />}
       {spot.type === "Ev" && <AiFillThunderbolt />}

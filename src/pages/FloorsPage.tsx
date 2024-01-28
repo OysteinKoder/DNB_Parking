@@ -1,10 +1,8 @@
-import { FaWheelchair, FaCar } from "react-icons/fa";
-import { MdFamilyRestroom } from "react-icons/md";
-import { Anchor, Button, Space } from "@dnb/eufemia";
-import { AiFillThunderbolt } from "react-icons/ai";
+import { Anchor } from "@dnb/eufemia";
 import { useContext } from "react";
 import { ParkContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
+import FloorStore from "../components/FloorStore";
 
 function FloorsPage() {
   const contextValue = useContext(ParkContext);
@@ -19,46 +17,30 @@ function FloorsPage() {
     navigate("/choose-parking");
   };
 
-  const renderFloor = (floor: any, floorIdx: number) => (
-    <div key={floorIdx}>
-      <h3>P {floorIdx + 1}</h3>
-      <div className="floorCard ">
-        {floor.parkingSpots.map((spot: any, spotIdx: number) => (
-          <div key={spotIdx}>
-            <span
-              className={`floorCardText ${
-                spot.freeSpots === 0 ? "red" : "green"
-              }`}
-            >
-              {spot.type === "Hc" && <FaWheelchair />}
-              {spot.type === "Family" && <MdFamilyRestroom />}
-              {spot.type === "Ev" && <AiFillThunderbolt />}
-              {spot.type === "Normal" && <FaCar />} {spot.freeSpots}
-            </span>
-          </div>
-        ))}
-      </div>
-      <Button
-        onClick={() => handleClick(floorIdx)}
-        disabled={floor.parkingSpots.every((spot: any) => spot.freeSpots === 0)}
-      >
-        Select
-      </Button>
-      <Space bottom="2.5rem" />
-    </div>
-  );
-
   return (
     <div>
       <h2>Floors</h2>
       <Anchor href="/admin-page">Admin Page</Anchor>
       {data.length === 3
-        ? data.slice(0, 3).map(renderFloor)
+        ? data
+            .slice(0, 3)
+            .map((floor, idx) => (
+              <FloorStore
+                floor={floor}
+                floorIdx={idx}
+                handleClick={handleClick}
+                key={idx}
+              />
+            ))
         : Object.keys(data)
             .filter((key) => key !== "selectedFloor")
-            .map((key) =>
-              renderFloor((data as Record<string, any>)[key], parseInt(key))
-            )}
+            .map((key) => (
+              <FloorStore
+                floor={(data as Record<string, any>)[key]}
+                floorIdx={parseInt(key)}
+                handleClick={handleClick}
+              />
+            ))}
     </div>
   );
 }

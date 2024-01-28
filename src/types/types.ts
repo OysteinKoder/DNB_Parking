@@ -59,3 +59,9 @@ export type CapacityFormProps = {
   handleCapacityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleCapacitySubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 };
+
+export interface FloorStoreProps {
+  floor: any;
+  floorIdx: number;
+  handleClick: (floorIdx: number) => void;
+}

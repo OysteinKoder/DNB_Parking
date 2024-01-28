@@ -1,36 +1,33 @@
-import { Button, H2, P, Space } from "@dnb/eufemia";
+import "./leaveParkingPage/style.css";
+import { Dialog, H2, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LeaveParkingPage() {
-  //states
   const [parkingDuration, setParkingDuration] = useState("");
   const [price, setPrice] = useState(0);
-
   const parkedCar = JSON.parse(localStorage.getItem("parkedCar") || "[]");
   const hourlyRates = JSON.parse(localStorage.getItem("hourlyRates") || "{}");
+  const dialogText = `time: ${parkingDuration} price: ${price} kr`;
+  const navigate = useNavigate();
 
-  //reloads page every 5 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      window.location.reload();
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // calculates the parking duration and price
-  useEffect(() => {
+  const calculatePrice = () => {
     if (parkedCar[0]) {
       const currentTime = new Date().getTime();
       const entryTime = new Date(parkedCar[0].entryTime).getTime();
       let durationInSeconds = (currentTime - entryTime) / 1000;
 
-      const days = Math.floor(durationInSeconds / 86400);
-      const hours = Math.floor((durationInSeconds % 86400) / 3600);
-      const minutes = Math.floor((durationInSeconds % 3600) / 60);
-      const seconds = Math.floor(durationInSeconds % 60);
+      const hours = Math.floor((durationInSeconds % 86400) / 3600)
+        .toString()
+        .padStart(2, "0");
+      const minutes = Math.floor((durationInSeconds % 3600) / 60)
+        .toString()
+        .padStart(2, "0");
+      const seconds = Math.floor(durationInSeconds % 60)
+        .toString()
+        .padStart(2, "0");
 
-      setParkingDuration(`${days}:${hours}:${minutes}:${seconds}`);
+      setParkingDuration(`${hours}:${minutes}:${seconds}`);
 
       let totalHours = Math.ceil(durationInSeconds / 3600);
       let totalPrice = 0;
@@ -41,37 +38,42 @@ function LeaveParkingPage() {
         durationInSeconds -= Math.min(3600, durationInSeconds);
         totalHours--;
       }
-
       if (totalHours > 0) {
-        totalPrice +=
-          (hourlyRates.secondHour / 3600) * Math.min(3600, durationInSeconds);
-        durationInSeconds -= Math.min(3600, durationInSeconds);
-        totalHours--;
+        totalPrice += (hourlyRates.afterFirstHour / 3600) * durationInSeconds;
       }
-
-      totalPrice += totalHours * hourlyRates.followingHours;
-
-      setPrice(parseFloat(totalPrice.toFixed(2)));
+      setPrice(Math.ceil(totalPrice));
     }
-  }, [parkedCar, hourlyRates]);
+  };
+
+  // updates the price every minute
+  useEffect(() => {
+    calculatePrice();
+    const timer = setInterval(() => {
+      calculatePrice();
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div>
       <H2>Leave Parking Page</H2>
       <div className="checkoutCard">
-        <P>Time : {parkingDuration}</P>
+        <P>Time: {parkingDuration}</P>
         <Space top="1rem" />
-        <P>Price : {price} kr</P>
+        <P>Price: {price} kr</P>
         <Space top="1rem" />
-        <Button
-          text="Checkout"
-          on_click={() => {
-            window.alert(
-              "thank you for parking, the price is: " +
-                price +
-                " kr. " +
-                "Now we could redirect to payment page"
-            );
+        <Dialog
+          variant="confirmation"
+          title="Checkout"
+          description={dialogText}
+          onConfirm={({ close }: { close: () => void }) => {
+            close();
+            localStorage.removeItem("parkedCar");
+            navigate("/");
+          }}
+          triggerAttributes={{
+            text: "Checkout",
           }}
         />
         <Space top="1rem" />
