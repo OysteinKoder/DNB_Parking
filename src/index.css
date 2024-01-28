@@ -1,49 +1,49 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  width: 100vw;
-
   color-scheme: light dark;
-  background-color: #ffffff;
-  color: black;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   --dnb_seaGreen: #007272;
   --dnb_mintGreen: #a5e1d2;
+  width: 100vw;
+  background-color: #ffffff;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: black;
 }
 
 input {
-  color: black;
+  padding: 0.25rem;
   background-color: white;
   border-radius: 5px;
-  padding: 0.25rem;
+  color: black;
   text-align: center;
 }
 
 body {
-  margin: 0;
-  display: flex;
   place-items: center;
+  display: flex;
   min-width: 100vw;
   min-height: 100vh;
+  margin: 0;
+}
+
+p {
+  color: black;
 }
 
 .pageContainer {
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.497);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   width: 25rem;
+  padding: 1rem;
   border: var(--dnb_seaGreen) solid 1px;
   border-radius: 5px;
-  padding: 1rem;
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.497);
-
   @media screen and (max-width: 768px) {
     width: 60vw;
   }
@@ -55,33 +55,26 @@ body {
 }
 
 .floorCard {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.497);
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   width: 85%;
-  border: var(--dnb_seaGreen) solid 1px;
-  background-color: var(--dnb_mintGreen);
-  border-radius: 5px;
-  padding: 1rem;
-  margin-bottom: 1rem;
   margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--dnb_mintGreen);
+  border: var(--dnb_seaGreen) solid 1px;
+  border-radius: 5px;
   color: black;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.497);
 }
 
 .row {
   display: flex;
   flex-direction: row;
-  padding: 1rem;
   gap: 1rem;
-}
-
-.center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding: 1rem;
 }
 
 .red {
@@ -92,16 +85,7 @@ body {
   color: #01a043;
 }
 
-p {
-  color: black;
-}
-
 .textMargin {
-  margin-left: 0.25rem;
   margin-right: 0.25rem;
-}
-
-.reverse {
-  display: flex;
-  flex-direction: column-reverse;
+  margin-left: 0.25rem;
 }

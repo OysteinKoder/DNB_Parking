@@ -1,3 +1,4 @@
+import "./adminPage/style.css";
 import parkData from "../data/parkingData.json";
 import RatesDisplay from "../components/RatesDisplay";
 import RatesForm from "../components/RatesForm";
