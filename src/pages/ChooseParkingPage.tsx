@@ -30,6 +30,7 @@ function ChooseParkingPage() {
   // Update the free spots in the selected floor and add the new vehicle to the parkedCar array, + save to localStorage
   const handleClick = (spotIdx: number) => {
     const newDatas = JSON.parse(JSON.stringify(data));
+
     if (newDatas[selectedFloor].parkingSpots[spotIdx].freeSpots > 0) {
       newDatas[selectedFloor].parkingSpots[spotIdx].freeSpots--;
     } else {
@@ -69,13 +70,19 @@ function ChooseParkingPage() {
       </div>
       {currentFloor.map((spot: Spot, spotIdx: number) => (
         <div className="pickSpotCard" key={spotIdx}>
-          <span className="textMargin">
+          <span
+            className={`textMargin ${spot.freeSpots === 0 ? "red" : "green"}`}
+          >
             {spot.type === "Hc" && <FaWheelchair />}
             {spot.type === "Family" && <MdFamilyRestroom />}
             {spot.type === "Ev" && <AiFillThunderbolt />}
             {spot.type === "Normal" && <FaCar />} {spot.freeSpots}
           </span>
-          <Button text="park" on_click={() => handleClick(spotIdx)} />
+          <Button
+            text="park"
+            on_click={() => handleClick(spotIdx)}
+            disabled={spot.freeSpots === 0}
+          />
         </div>
       ))}
     </div>
