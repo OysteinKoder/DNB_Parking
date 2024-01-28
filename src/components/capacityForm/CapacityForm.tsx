@@ -1,5 +1,6 @@
 import { Space, Button } from "@dnb/eufemia";
-import { CapacityFormProps } from "../types/types";
+import { CapacityFormProps } from "../../types/types";
+import "./style.css";
 
 const CapacityForm: React.FC<CapacityFormProps> = ({
   totalCapacity,

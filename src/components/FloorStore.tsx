@@ -16,9 +16,7 @@ const FloorStore: React.FC<FloorStoreProps> = ({
       {floor.parkingSpots.map((spot: any, spotIdx: number) => (
         <div key={spotIdx}>
           <span
-            className={`floorCardText ${
-              spot.freeSpots === 0 ? "red" : "green"
-            }`}
+            className={`textMargin ${spot.freeSpots === 0 ? "red" : "green"}`}
           >
             {spot.type === "Hc" && <FaWheelchair />}
             {spot.type === "Family" && <MdFamilyRestroom />}

@@ -1,3 +1,4 @@
+import "./chooseParkingPage/style.css";
 import { FaWheelchair, FaCar } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
 import { Anchor, Button } from "@dnb/eufemia";
@@ -68,7 +69,7 @@ function ChooseParkingPage() {
       </div>
       {currentFloor.map((spot: Spot, spotIdx: number) => (
         <div className="pickSpotCard" key={spotIdx}>
-          <span className="floorCardText">
+          <span className="textMargin">
             {spot.type === "Hc" && <FaWheelchair />}
             {spot.type === "Family" && <MdFamilyRestroom />}
             {spot.type === "Ev" && <AiFillThunderbolt />}

@@ -1,3 +1,4 @@
+import "./leaveParkingPage/style.css";
 import { Button, H2, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
 
