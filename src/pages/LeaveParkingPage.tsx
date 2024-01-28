@@ -16,11 +16,17 @@ function LeaveParkingPage() {
       const entryTime = new Date(parkedCar[0].entryTime).getTime();
       let durationInSeconds = (currentTime - entryTime) / 1000;
 
-      const hours = Math.floor((durationInSeconds % 86400) / 3600);
-      const minutes = Math.floor((durationInSeconds % 3600) / 60);
-      const seconds = Math.floor(durationInSeconds % 60);
+      const hours = Math.floor((durationInSeconds % 86400) / 3600)
+        .toString()
+        .padStart(2, "0");
+      const minutes = Math.floor((durationInSeconds % 3600) / 60)
+        .toString()
+        .padStart(2, "0");
+      const seconds = Math.floor(durationInSeconds % 60)
+        .toString()
+        .padStart(2, "0");
 
-      setParkingDuration(`:${hours}:${minutes}:${seconds}`);
+      setParkingDuration(`${hours}:${minutes}:${seconds}`);
 
       let totalHours = Math.ceil(durationInSeconds / 3600);
       let totalPrice = 0;
@@ -40,11 +46,12 @@ function LeaveParkingPage() {
     }
   };
 
-  //reloads page every 5 seconds
+  // updates the price every minute
   useEffect(() => {
+    calculatePrice();
     const timer = setInterval(() => {
       calculatePrice();
-    }, 5000);
+    }, 60000);
 
     return () => clearInterval(timer);
   }, []);
@@ -53,9 +60,9 @@ function LeaveParkingPage() {
     <div>
       <H2>Leave Parking Page</H2>
       <div className="checkoutCard">
-        <P>Time : {parkingDuration}</P>
+        <P>Time: {parkingDuration}</P>
         <Space top="1rem" />
-        <P>Price : {price} kr</P>
+        <P>Price: {price} kr</P>
         <Space top="1rem" />
         <Button
           text="Checkout"
