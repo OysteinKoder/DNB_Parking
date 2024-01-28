@@ -1,14 +1,15 @@
 import "./leaveParkingPage/style.css";
-import { Button, H2, P, Space } from "@dnb/eufemia";
+import { Dialog, H2, P, Space } from "@dnb/eufemia";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LeaveParkingPage() {
-  //states
   const [parkingDuration, setParkingDuration] = useState("");
   const [price, setPrice] = useState(0);
-
   const parkedCar = JSON.parse(localStorage.getItem("parkedCar") || "[]");
   const hourlyRates = JSON.parse(localStorage.getItem("hourlyRates") || "{}");
+  const dialogText = `time: ${parkingDuration} price: ${price} kr`;
+  const navigate = useNavigate();
 
   const calculatePrice = () => {
     if (parkedCar[0]) {
@@ -37,11 +38,9 @@ function LeaveParkingPage() {
         durationInSeconds -= Math.min(3600, durationInSeconds);
         totalHours--;
       }
-
       if (totalHours > 0) {
         totalPrice += (hourlyRates.afterFirstHour / 3600) * durationInSeconds;
       }
-
       setPrice(Math.ceil(totalPrice));
     }
   };
@@ -64,15 +63,17 @@ function LeaveParkingPage() {
         <Space top="1rem" />
         <P>Price: {price} kr</P>
         <Space top="1rem" />
-        <Button
-          text="Checkout"
-          on_click={() => {
-            window.alert(
-              "thank you for parking, the price is: " +
-                price +
-                " kr. " +
-                "Now we could redirect to payment page"
-            );
+        <Dialog
+          variant="confirmation"
+          title="Checkout"
+          description={dialogText}
+          onConfirm={({ close }: { close: () => void }) => {
+            close();
+            localStorage.removeItem("parkedCar");
+            navigate("/");
+          }}
+          triggerAttributes={{
+            text: "Checkout",
           }}
         />
         <Space top="1rem" />
