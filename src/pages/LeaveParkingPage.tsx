@@ -10,28 +10,17 @@ function LeaveParkingPage() {
   const parkedCar = JSON.parse(localStorage.getItem("parkedCar") || "[]");
   const hourlyRates = JSON.parse(localStorage.getItem("hourlyRates") || "{}");
 
-  //reloads page every 5 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      window.location.reload();
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // calculates the parking duration and price
-  useEffect(() => {
+  const calculatePrice = () => {
     if (parkedCar[0]) {
       const currentTime = new Date().getTime();
       const entryTime = new Date(parkedCar[0].entryTime).getTime();
       let durationInSeconds = (currentTime - entryTime) / 1000;
 
-      const days = Math.floor(durationInSeconds / 86400);
       const hours = Math.floor((durationInSeconds % 86400) / 3600);
       const minutes = Math.floor((durationInSeconds % 3600) / 60);
       const seconds = Math.floor(durationInSeconds % 60);
 
-      setParkingDuration(`${days}:${hours}:${minutes}:${seconds}`);
+      setParkingDuration(`:${hours}:${minutes}:${seconds}`);
 
       let totalHours = Math.ceil(durationInSeconds / 3600);
       let totalPrice = 0;
@@ -44,17 +33,21 @@ function LeaveParkingPage() {
       }
 
       if (totalHours > 0) {
-        totalPrice +=
-          (hourlyRates.secondHour / 3600) * Math.min(3600, durationInSeconds);
-        durationInSeconds -= Math.min(3600, durationInSeconds);
-        totalHours--;
+        totalPrice += (hourlyRates.afterFirstHour / 3600) * durationInSeconds;
       }
 
-      totalPrice += totalHours * hourlyRates.followingHours;
-
-      setPrice(parseFloat(totalPrice.toFixed(2)));
+      setPrice(Math.ceil(totalPrice));
     }
-  }, [parkedCar, hourlyRates]);
+  };
+
+  //reloads page every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      calculatePrice();
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div>
