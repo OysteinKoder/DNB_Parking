@@ -4,13 +4,16 @@ import FloorsPage from "./pages/FloorsPage";
 import ChooseParkingPage from "./pages/ChooseParkingPage";
 import LeaveParkingPage from "./pages/LeaveParkingPage";
 import AdminPage from "./pages/AdminPage";
-import { H1, P, Space } from "@dnb/eufemia";
+import { Button, H1, P, Space } from "@dnb/eufemia";
 import { createContext, useEffect, useState } from "react";
 import { ParkContext, HourlyRatesContext } from "./context/context";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HourlyRatesType, Spot, Vehicle } from "./types/types";
+import { useParkingStore } from "./state/store";
 
 function App() {
+  const parkingStoreIncrease = useParkingStore((state: any) => state.increment);
+  const parkingStoreText = useParkingStore((state: any) => state.setString);
   const [data, setData] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkingData");
     if (storedData) {
@@ -53,6 +56,13 @@ function App() {
           <BrowserRouter basename="">
             <div className="pageContainer">
               <H1>DNB Park</H1>
+              <Button on_click={parkingStoreIncrease} text="bears" />
+              <Button
+                on_click={() => {
+                  parkingStoreText("hello madamme");
+                }}
+                text="change text"
+              />
               <Space bottom="large" />
 
               <Routes>

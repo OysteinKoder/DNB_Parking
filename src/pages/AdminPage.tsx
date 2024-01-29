@@ -11,8 +11,10 @@ import {
   initialCapacity,
   initialRates,
 } from "../data/initialRates_initialCapacity";
+import { useParkingStore } from "../state/store";
 
 function AdminPage() {
+  const parkingStoreCount = useParkingStore((state: any) => state.count);
   // Fetches States from localStorage if they exist, otherwise sets them to default values
   const [parkedCars] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkedCar");
@@ -152,6 +154,7 @@ function AdminPage() {
     <div className="center">
       <h1>Admin Page</h1>
       <Anchor href="/">Back</Anchor>
+      <h2>{parkingStoreCount}</h2>
       <h2>Total Earnings: {calculateEarnings()}</h2>
       <h3>Rates</h3>
       <RatesDisplay hourlyRates={hourlyRates} />
