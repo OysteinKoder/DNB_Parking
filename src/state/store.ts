@@ -29,7 +29,7 @@ export const useParkingStore = create(
           Normal: 0,
         },
       ],
-      initialCapacity: {
+      totalCapacity: {
         Normal: 50,
         Hc: 3,
         Ev: 10,
@@ -40,17 +40,16 @@ export const useParkingStore = create(
         timeEnd: null,
         currentPrice: null,
       },
+      count: {
+        number: null,
+      },
+
+      setCapacity: (newCapacity: any) => {
+        set((state: any) => ({ ...state, totalCapacity: newCapacity }));
+      },
 
       increment: () => {
         set((state: { count: number }) => ({ count: state.count + 1 }));
-      },
-      decrement: () => {
-        set((state: { count: number }) => ({ count: state.count - 1 }));
-      },
-      setString: (textProp: string) => {
-        set((state: { string: string }) => ({
-          string: state.string + textProp,
-        }));
       },
     }),
     {

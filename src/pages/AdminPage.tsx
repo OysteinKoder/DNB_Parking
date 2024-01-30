@@ -5,14 +5,18 @@ import RatesForm from "../components/RatesForm";
 import CapacityDisplay from "../components/capacityDisplay/CapacityDisplay";
 import CapacityForm from "../components/capacityForm/CapacityForm";
 import { useState } from "react";
-import { Anchor } from "@dnb/eufemia/components";
+import { Anchor, Button } from "@dnb/eufemia/components";
 import { Spot } from "../types/types";
 import {
   initialCapacity,
   initialRates,
 } from "../data/initialRates_initialCapacity";
+import { useParkingStore } from "../state/store";
 
 function AdminPage() {
+  const capacity = useParkingStore((state) => state.totalCapacity);
+  const setTotalCapacityStore = useParkingStore((state) => state.setCapacity);
+  console.log(capacity);
   // Fetches States from localStorage if they exist, otherwise sets them to default values
   const [parkedCars] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkedCar");
@@ -148,9 +152,22 @@ function AdminPage() {
     localStorage.setItem("totalCapacity", JSON.stringify(updatedTotalCapacity));
   };
 
+  const changeStoreCapacity = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const updatedTotalCapacity = {
+      Normal: Number(event.currentTarget.Normal.value),
+      Hc: Number(event.currentTarget.Hc.value),
+      Ev: Number(event.currentTarget.Ev.value),
+      Family: Number(event.currentTarget.Family.value),
+    };
+    setTotalCapacityStore(updatedTotalCapacity);
+    console.log(updatedTotalCapacity);
+  };
+
   return (
     <div className="center">
       <h1>Admin Page</h1>
+      <Button text="test" on_click={() => setTotalCapacityStore()} />
       <Anchor href="/">Back</Anchor>
       <h2>Total Earnings: {calculateEarnings()}</h2>
       <h3>Rates</h3>
@@ -165,7 +182,7 @@ function AdminPage() {
       <CapacityForm
         totalCapacity={totalCapacity}
         handleCapacityChange={handleCapacityChange}
-        handleCapacitySubmit={handleCapacitySubmit}
+        handleCapacitySubmit={changeStoreCapacity}
       />
     </div>
   );
