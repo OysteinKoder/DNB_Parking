@@ -44,12 +44,8 @@ export const useParkingStore = create(
         number: null,
       },
 
-      setCapacity: (newCapacity: any) => {
-        set((state: any) => ({ ...state, totalCapacity: newCapacity }));
-      },
-
-      increment: () => {
-        set((state: { count: number }) => ({ count: state.count + 1 }));
+      setTotalCapacity: (event: any) => {
+        set({ totalCapacity: event });
       },
     }),
     {
