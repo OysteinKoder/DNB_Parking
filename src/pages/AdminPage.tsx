@@ -7,10 +7,7 @@ import CapacityForm from "../components/capacityForm/CapacityForm";
 import { useState } from "react";
 import { Anchor } from "@dnb/eufemia/components";
 import { Spot } from "../types/types";
-import {
-  initialCapacity,
-  initialRates,
-} from "../data/initialRates_initialCapacity";
+import { useParkingStore } from "../state/store";
 
 function AdminPage() {
   // Fetches States from localStorage if they exist, otherwise sets them to default values
@@ -23,26 +20,10 @@ function AdminPage() {
       return parkData;
     }
   });
-  const [hourlyRates, setHourlyRates] = useState(() => {
-    const storedRates = localStorage.getItem("hourlyRates");
-    if (storedRates) {
-      return JSON.parse(storedRates);
-    } else {
-      return {
-        initialRates,
-      };
-    }
-  });
+  const hourlyRates = useParkingStore((state) => state.hourlyRates);
 
-  const [totalCapacity, setTotalCapacity] = useState(() => {
-    const storedCapacity = localStorage.getItem("totalCapacity");
-    if (storedCapacity) {
-      return JSON.parse(storedCapacity);
-    } else {
-      localStorage.setItem("totalCapacity", JSON.stringify(initialCapacity));
-      return initialCapacity;
-    }
-  });
+  const totalCapacity = useParkingStore((state) => state.totalCapacity);
+  const setTotalCapacity = useParkingStore((state) => state.setTotalCapacity);
 
   const [data] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkingData");
@@ -52,18 +33,6 @@ function AdminPage() {
       return parkData;
     }
   });
-
-  const handleRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHourlyRates({
-      ...hourlyRates,
-      [event.target.name]: parseFloat(event.target.value),
-    });
-  };
-
-  const handleRateSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    localStorage.setItem("hourlyRates", JSON.stringify(hourlyRates));
-  };
 
   // Calculate earnings for each parkedCar and dummy cars
   const calculateEarnings = () => {
@@ -136,18 +105,6 @@ function AdminPage() {
     });
   };
 
-  const handleCapacitySubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const updatedTotalCapacity = {
-      Normal: Number(event.currentTarget.Normal.value),
-      Hc: Number(event.currentTarget.Hc.value),
-      Ev: Number(event.currentTarget.Ev.value),
-      Family: Number(event.currentTarget.Family.value),
-    };
-    setTotalCapacity(updatedTotalCapacity);
-    localStorage.setItem("totalCapacity", JSON.stringify(updatedTotalCapacity));
-  };
-
   return (
     <div className="center">
       <h1>Admin Page</h1>
@@ -155,11 +112,7 @@ function AdminPage() {
       <h2>Total Earnings: {calculateEarnings()}</h2>
       <h3>Rates</h3>
       <RatesDisplay hourlyRates={hourlyRates} />
-      <RatesForm
-        hourlyRates={hourlyRates}
-        handleRateChange={handleRateChange}
-        handleRateSubmit={handleRateSubmit}
-      />
+      <RatesForm hourlyRates={hourlyRates} />
       <h3>Max Capacity</h3>
       <CapacityDisplay totalCapacity={totalCapacity} />
       <CapacityForm

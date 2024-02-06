@@ -13,7 +13,6 @@ import { useParkingStore } from "./state/store";
 
 function App() {
   const parkStore = useParkingStore();
-  console.log(parkStore);
   const [data, setData] = useState<Spot[]>(() => {
     const storedData = localStorage.getItem("parkingData");
     if (storedData) {

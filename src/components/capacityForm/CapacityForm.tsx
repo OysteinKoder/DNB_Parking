@@ -7,6 +7,7 @@ import { useParkingStore } from "../../state/store";
 type CapacityFormProps = {
   totalCapacity: Capacity;
   handleCapacityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCapacitySubmit: () => void;
 };
 
 const CapacityForm: React.FC<CapacityFormProps> = ({
@@ -17,8 +18,6 @@ const CapacityForm: React.FC<CapacityFormProps> = ({
 
   const changeStoreCapacity = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("works");
-
     const form = event.currentTarget;
     const normalCapacity = form.elements.namedItem(
       "Normal"

@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 export const useParkingStore = create(
   persist(
     (set) => ({
-      initialRates: {
+      hourlyRates: {
         firstHour: 50,
         secondHour: 40,
         followingHours: 25,
@@ -43,14 +43,16 @@ export const useParkingStore = create(
       count: {
         number: null,
       },
-
       setTotalCapacity: (event: any) => {
         set({ totalCapacity: event });
+      },
+      setHourlyRates: (hourlyRates) => {
+        set({ hourlyRates });
       },
     }),
     {
       name: "park-persist",
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
